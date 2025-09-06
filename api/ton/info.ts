@@ -1,9 +1,4 @@
-import type { VercelRequest, VercelResponse } from "@vercel/node";
-
-export default async function handler(
-  _req: VercelRequest,
-  res: VercelResponse,
-) {
+export default async function handler(_req: any, res: any) {
   try {
     const r = await fetch("https://tonapi.io/v2/blockchain/info");
     const data = await r.json();
