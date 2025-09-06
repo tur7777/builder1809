@@ -13,6 +13,7 @@ import Take from "./pages/Take";
 import Learn from "./pages/Learn";
 import Profile from "./pages/Profile";
 import CreateOffer from "./pages/CreateOffer";
+import Header from "@/components/layout/Header";
 
 const queryClient = new QueryClient();
 
@@ -22,16 +23,18 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/make" element={<Make />} />
-          <Route path="/take" element={<Take />} />
-          <Route path="/learn" element={<Learn />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/offer/new" element={<CreateOffer />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <Header>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/make" element={<Make />} />
+            <Route path="/take" element={<Take />} />
+            <Route path="/learn" element={<Learn />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/offer/new" element={<CreateOffer />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Header>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
