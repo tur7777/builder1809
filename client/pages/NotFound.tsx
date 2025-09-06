@@ -16,7 +16,10 @@ const NotFound = () => {
       <div className="text-center">
         <h1 className="text-5xl font-extrabold mb-2">404</h1>
         <p className="text-sm text-white/60 mb-6">This page doesn’t exist.</p>
-        <a href="/" className="inline-flex items-center rounded-lg bg-white/10 px-4 py-2 text-sm font-medium text-white hover:bg-white/15">
+        <a
+          href="/"
+          className="inline-flex items-center rounded-lg bg-white/10 px-4 py-2 text-sm font-medium text-white hover:bg-white/15"
+        >
           Go back home
         </a>
       </div>

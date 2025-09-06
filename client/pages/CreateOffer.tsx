@@ -32,18 +32,38 @@ export default function CreateOffer() {
     <div className="min-h-screen bg-[hsl(217,33%,9%)] text-white">
       <div className="mx-auto w-full max-w-2xl px-4 py-10">
         <h1 className="text-3xl font-bold">Create a New Offer</h1>
-        <p className="mt-2 text-white/70">Define the title and budget in TON. Escrow and on-chain actions подключим позже.</p>
+        <p className="mt-2 text-white/70">
+          Define the title and budget in TON. Escrow and on-chain actions
+          подключим позже.
+        </p>
 
         <div className="mt-6 space-y-4">
           <div>
             <label className="mb-2 block text-sm text-white/70">Title</label>
-            <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Landing page design" className="bg-white/5 text-white border-white/10" />
+            <Input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Landing page design"
+              className="bg-white/5 text-white border-white/10"
+            />
           </div>
           <div>
-            <label className="mb-2 block text-sm text-white/70">Budget (TON)</label>
-            <Input type="number" step="0.01" value={budget} onChange={(e) => setBudget(e.target.value)} className="bg-white/5 text-white border-white/10" />
+            <label className="mb-2 block text-sm text-white/70">
+              Budget (TON)
+            </label>
+            <Input
+              type="number"
+              step="0.01"
+              value={budget}
+              onChange={(e) => setBudget(e.target.value)}
+              className="bg-white/5 text-white border-white/10"
+            />
           </div>
-          <Button onClick={submit} disabled={loading || !title} className="bg-primary text-primary-foreground">
+          <Button
+            onClick={submit}
+            disabled={loading || !title}
+            className="bg-primary text-primary-foreground"
+          >
             {loading ? "Creating..." : "Create Offer"}
           </Button>
         </div>

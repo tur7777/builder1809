@@ -32,7 +32,10 @@ export function createServer() {
     try {
       const fs = await import("fs/promises");
       const path = await import("path");
-      const content = await fs.readFile(path.resolve(process.cwd(), "public/tonconnect-manifest.json"), "utf-8");
+      const content = await fs.readFile(
+        path.resolve(process.cwd(), "public/tonconnect-manifest.json"),
+        "utf-8",
+      );
       res.setHeader("Content-Type", "application/json; charset=utf-8");
       res.setHeader("Access-Control-Allow-Origin", "*");
       res.send(content);
