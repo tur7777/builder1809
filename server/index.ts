@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
+import { createOffer, listOffers, tonChainInfo } from "./routes/offers";
 
 export function createServer() {
   const app = express();
@@ -18,6 +19,13 @@ export function createServer() {
   });
 
   app.get("/api/demo", handleDemo);
+
+  // Offers API
+  app.get("/api/offers", listOffers);
+  app.post("/api/offers", createOffer);
+
+  // TON chain info proxy
+  app.get("/api/ton/info", tonChainInfo);
 
   return app;
 }
