@@ -1,6 +1,12 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
-let offers: { id: string; title: string; budgetTON: number; status: "open" | "taken" | "done"; createdAt: string }[] = [];
+let offers: {
+  id: string;
+  title: string;
+  budgetTON: number;
+  status: "open" | "taken" | "done";
+  createdAt: string;
+}[] = [];
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -13,7 +19,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   if (req.method === "POST") {
-    const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
+    const body =
+      typeof req.body === "string"
+        ? JSON.parse(req.body || "{}")
+        : req.body || {};
     const { title, budgetTON } = body;
     if (!title || typeof budgetTON !== "number" || budgetTON < 0) {
       return res.status(400).json({ error: "Invalid payload" });
