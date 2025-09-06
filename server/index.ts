@@ -28,22 +28,25 @@ export function createServer() {
   app.get("/api/ton/info", tonChainInfo);
 
   // Serve TonConnect manifest with CORS to satisfy wallets
-  app.get("/tonconnect-manifest.json", (_req, res) => {
+  app.get("/tonconnect-manifest.json", async (_req, res) => {
     try {
-      const manifest = require("../public/tonconnect-manifest.json");
+      const fs = await import("fs/promises");
+      const path = await import("path");
+      const content = await fs.readFile(path.resolve(process.cwd(), "public/tonconnect-manifest.json"), "utf-8");
       res.setHeader("Content-Type", "application/json; charset=utf-8");
       res.setHeader("Access-Control-Allow-Origin", "*");
-      res.json(manifest);
+      res.send(content);
     } catch (e) {
       res.status(500).json({ error: "manifest read error" });
     }
   });
 
   // Serve placeholder icon with CORS
-  app.get("/placeholder.svg", (_req, res) => {
+  app.get("/placeholder.svg", async (_req, res) => {
     try {
+      const path = await import("path");
       res.setHeader("Access-Control-Allow-Origin", "*");
-      res.sendFile(require("path").resolve(process.cwd(), "public/placeholder.svg"));
+      res.sendFile(path.resolve(process.cwd(), "public/placeholder.svg"));
     } catch (e) {
       res.status(404).end();
     }
