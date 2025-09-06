@@ -32,7 +32,14 @@ export const createOffer: RequestHandler = (req, res) => {
 
 export const tonChainInfo: RequestHandler = async (_req, res) => {
   try {
-    const r = await fetch("https://tonapi.io/v2/blockchain/info");
+    const base = process.env.TON_API_BASE || "https://tonapi.io"; // allow testnet or TON Access
+    const url = `${base.replace(/\/$/, "")}/v2/blockchain/info`;
+    const key = process.env.TON_API_KEY;
+    const r = await fetch(url, {
+      headers: key
+        ? { Authorization: `Bearer ${key}`, "X-API-Key": key }
+        : undefined,
+    });
     const data = await r.json();
     res.json({ ok: true, data });
   } catch (e) {
