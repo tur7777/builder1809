@@ -14,6 +14,8 @@ import Learn from "./pages/Learn";
 import Profile from "./pages/Profile";
 import CreateOffer from "./pages/CreateOffer";
 import Header from "@/components/layout/Header";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
 
 const queryClient = new QueryClient();
 
