@@ -28,19 +28,21 @@ export function createServer() {
   app.get("/api/ton/info", tonChainInfo);
 
   // Serve TonConnect manifest with CORS to satisfy wallets
-  app.get("/tonconnect-manifest.json", async (_req, res) => {
+  app.get("/tonconnect-manifest.json", async (req, res) => {
     try {
-      const fs = await import("fs/promises");
-      const path = await import("path");
-      const content = await fs.readFile(
-        path.resolve(process.cwd(), "public/tonconnect-manifest.json"),
-        "utf-8",
-      );
+      const base = `${req.protocol}://${req.get("host")}`;
+      const manifest = {
+        url: base,
+        name: "FreelTON",
+        iconUrl: `${base}/placeholder.svg`,
+        termsOfUseUrl: `${base}/terms`,
+        privacyPolicyUrl: `${base}/privacy`,
+      };
       res.setHeader("Content-Type", "application/json; charset=utf-8");
       res.setHeader("Access-Control-Allow-Origin", "*");
-      res.send(content);
+      res.json(manifest);
     } catch (e) {
-      res.status(500).json({ error: "manifest read error" });
+      res.status(500).json({ error: "manifest build error" });
     }
   });
 
