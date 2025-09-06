@@ -3,24 +3,26 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
+import { Link } from "react-router-dom";
 
 type BotItem = {
   name: string;
+  path: string;
   handle?: string;
   color: string;
   image?: string;
 };
 
 const BOTS: BotItem[] = [
-  { name: "Make", color: "bg-violet-500" },
-  { name: "Take", color: "bg-amber-500" },
-  { name: "Learn", color: "bg-emerald-500" },
-  { name: "Profile", color: "bg-sky-500" },
+  { name: "Make", path: "/make", color: "bg-violet-500" },
+  { name: "Take", path: "/take", color: "bg-amber-500" },
+  { name: "Learn", path: "/learn", color: "bg-emerald-500" },
+  { name: "Profile", path: "/profile", color: "bg-sky-500" },
 ];
 
 function BotRow({ item }: { item: BotItem }) {
   return (
-    <div className="flex items-center gap-3 rounded-xl px-3 py-2 hover:bg-white/5">
+    <Link to={item.path} className="flex items-center gap-3 rounded-xl px-3 py-2 hover:bg-white/5">
       <Avatar className="h-10 w-10">
         {item.image ? (
           <AvatarImage src={item.image} alt={item.name} />
@@ -37,7 +39,7 @@ function BotRow({ item }: { item: BotItem }) {
         )}
       </div>
       <ChevronRight className="size-5 text-white/40" />
-    </div>
+    </Link>
   );
 }
 
@@ -76,8 +78,8 @@ export default function Index() {
         </h2>
 
         <div className="mt-2 flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2">
-          <Button variant="ghost" className="h-9 rounded-lg px-2 text-primary hover:bg-primary/10">
-            <Plus className="mr-2 size-4" /> Create a New Bot
+          <Button asChild variant="ghost" className="h-9 rounded-lg px-2 text-primary hover:bg-primary/10">
+            <Link to="/offer/new"><Plus className="mr-2 size-4" /> Create a New Offer</Link>
           </Button>
         </div>
 
