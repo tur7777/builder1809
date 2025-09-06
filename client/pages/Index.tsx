@@ -6,16 +6,16 @@ import { Separator } from "@/components/ui/separator";
 
 type BotItem = {
   name: string;
-  handle: string;
+  handle?: string;
   color: string;
   image?: string;
 };
 
 const BOTS: BotItem[] = [
-  { name: "freelton", handle: "@freeltonrobot", color: "bg-violet-500" },
-  { name: "pokerok martem", handle: "@pokermm_bot", color: "bg-amber-500" },
-  { name: "habit", handle: "@habitpybot", color: "bg-emerald-500" },
-  { name: "gpt 10Z", handle: "@gpt10zbot", color: "bg-sky-500" },
+  { name: "Make", color: "bg-violet-500" },
+  { name: "Take", color: "bg-amber-500" },
+  { name: "Learn", color: "bg-emerald-500" },
+  { name: "Profile", color: "bg-sky-500" },
 ];
 
 function BotRow({ item }: { item: BotItem }) {
@@ -32,7 +32,9 @@ function BotRow({ item }: { item: BotItem }) {
       </Avatar>
       <div className="min-w-0 flex-1">
         <div className="text-sm font-medium text-white truncate">{item.name}</div>
-        <div className="text-xs text-white/60 truncate">{item.handle}</div>
+        {item.handle && (
+          <div className="text-xs text-white/60 truncate">{item.handle}</div>
+        )}
       </div>
       <ChevronRight className="size-5 text-white/40" />
     </div>
@@ -54,11 +56,12 @@ export default function Index() {
           </div>
         </div>
 
-        <h1 className="mt-5 text-center text-2xl font-bold tracking-tight">BotFather</h1>
-        <p className="mt-2 text-center text-sm text-white/70">
-          BotFather is the one bot to rule them all. Use it to create new bot accounts
-          and manage your existing bots. <a className="text-primary hover:underline" href="#">Learn more</a>
-        </p>
+        <h1 className="mt-5 text-center text-2xl font-bold tracking-tight">FreelTON</h1>
+        <div className="mt-2 text-center text-sm text-white/70 space-y-1">
+          <p>FreelTON is crypto freelance based on TON.</p>
+          <p className="font-semibold text-[16px]">Freedom to Create. Assurance to Launch. Risk-Free</p>
+          <a className="text-primary hover:underline" href="#">Learn more</a>
+        </div>
 
         <div className="mt-6 relative">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-white/40" />
@@ -81,8 +84,8 @@ export default function Index() {
         <Separator className="my-4 bg-white/10" />
 
         <div className="space-y-1">
-          {BOTS.map((b) => (
-            <BotRow key={b.handle} item={b} />
+          {BOTS.map((b, idx) => (
+            <BotRow key={idx} item={b} />
           ))}
         </div>
       </div>
