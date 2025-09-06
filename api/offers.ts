@@ -18,7 +18,9 @@ export default async function handler(req: any, res: any) {
 
   if (req.method === "POST") {
     const body =
-      typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
+      typeof req.body === "string"
+        ? JSON.parse(req.body || "{}")
+        : req.body || {};
     const { title, budgetTON } = body;
     if (!title || typeof budgetTON !== "number" || budgetTON < 0) {
       return res.status(400).json({ error: "Invalid payload" });
