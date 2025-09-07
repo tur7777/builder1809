@@ -1,4 +1,8 @@
-import { TonConnectButton, TonConnectUIProvider, useTonWallet } from "@tonconnect/ui-react";
+import {
+  TonConnectButton,
+  TonConnectUIProvider,
+  useTonWallet,
+} from "@tonconnect/ui-react";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 

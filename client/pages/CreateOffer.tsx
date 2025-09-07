@@ -57,35 +57,35 @@ export default function CreateOffer() {
           </p>
 
           <div className="mt-6 space-y-4">
-          <div>
-            <label className="mb-2 block text-sm text-white/70">Title</label>
-            <Input
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Landing page design"
-              className="bg-white/5 text-white border-white/10"
-            />
+            <div>
+              <label className="mb-2 block text-sm text-white/70">Title</label>
+              <Input
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Landing page design"
+                className="bg-white/5 text-white border-white/10"
+              />
+            </div>
+            <div>
+              <label className="mb-2 block text-sm text-white/70">
+                Budget (TON)
+              </label>
+              <Input
+                type="number"
+                step="0.01"
+                value={budget}
+                onChange={(e) => setBudget(e.target.value)}
+                className="bg-white/5 text-white border-white/10"
+              />
+            </div>
+            <Button
+              onClick={submit}
+              disabled={loading || !title}
+              className="bg-primary text-primary-foreground"
+            >
+              {loading ? "Creating..." : "Create Offer"}
+            </Button>
           </div>
-          <div>
-            <label className="mb-2 block text-sm text-white/70">
-              Budget (TON)
-            </label>
-            <Input
-              type="number"
-              step="0.01"
-              value={budget}
-              onChange={(e) => setBudget(e.target.value)}
-              className="bg-white/5 text-white border-white/10"
-            />
-          </div>
-          <Button
-            onClick={submit}
-            disabled={loading || !title}
-            className="bg-primary text-primary-foreground"
-          >
-            {loading ? "Creating..." : "Create Offer"}
-          </Button>
-        </div>
         </WalletGate>
       </div>
     </div>
