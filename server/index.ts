@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
 import { createOffer, listOffers, tonChainInfo } from "./routes/offers";
+import { upsertUser } from "./routes/users";
 
 export function createServer() {
   const app = express();
