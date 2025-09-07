@@ -22,12 +22,23 @@ export const tonChainInfo: RequestHandler = async (_req, res) => {
     const base = process.env.TON_API_BASE || "https://tonapi.io"; // allow testnet or TON Access
     const url = `${base.replace(/\/$/, "")}/v2/blockchain/info`;
     const key = process.env.TON_API_KEY;
-    const r = await fetch(url, {
-      headers: key
-        ? { Authorization: `Bearer ${key}`, "X-API-Key": key }
-        : undefined,
-    });
-    const data = await r.json();
+
+    const headers: Record<string, string> = { Accept: "application/json" };
+    if (key) {
+      headers["Authorization"] = `Bearer ${key}`;
+      headers["X-API-Key"] = key;
+    }
+
+    const r = await fetch(url, { headers });
+    const contentType = r.headers.get("content-type") || "";
+    const isJson = contentType.includes("application/json");
+
+    if (!r.ok) {
+      const bodyText = await r.text().catch(() => "");
+      return res.status(r.status).json({ ok: false, status: r.status, url, error: bodyText || "Upstream request failed" });
+    }
+
+    const data = isJson ? await r.json() : await r.text();
     res.json({ ok: true, data });
   } catch (e) {
     res.status(500).json({ ok: false, error: String(e) });
