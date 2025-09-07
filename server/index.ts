@@ -21,6 +21,9 @@ export function createServer() {
 
   app.get("/api/demo", handleDemo);
 
+  // Users API
+  app.post("/api/users/upsert", upsertUser);
+
   // Offers API
   app.get("/api/offers", listOffers);
   app.post("/api/offers", createOffer);
