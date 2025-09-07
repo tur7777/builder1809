@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum OfferStatus {
+  open
+  taken
+  done
+}
+
+model User {
+  id        String   @id @default(cuid())
+  address   String?  @unique
+  createdAt DateTime @default(now())
+  offers    Offer[]
+  reviews   Review[]
+}
+
+model Offer {
+  id         String       @id @default(cuid())
+  title      String
+  budgetTON  Float
+  status     OfferStatus  @default(open)
+  createdAt  DateTime     @default(now())
+  creatorId  String?
+  creator    User?        @relation(fields: [creatorId], references: [id])
+  reviews    Review[]
+
+  @@index([createdAt])
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+  offerId   String
+  offer     Offer    @relation(fields: [offerId], references: [id])
+  authorId  String?
+  author    User?    @relation(fields: [authorId], references: [id])
+}
