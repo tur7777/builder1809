@@ -6,7 +6,11 @@ export default async function handler(req: any, res: any) {
 
   try {
     const base = process.env.TON_API_BASE || "https://tonapi.io"; // e.g. https://testnet.tonapi.io or TON Access endpoint
-    const url = `${base.replace(/\/$/, "")}/v2/blockchain/info`;
+    const origin = base.replace(/\/$/, "");
+    const candidates = [
+      `${origin}/v2/blockchain/info`,
+      `${origin}/v2/blockchain/config`,
+    ];
     const key = process.env.TON_API_KEY;
 
     const headers: Record<string, string> = { Accept: "application/json" };
@@ -15,18 +19,24 @@ export default async function handler(req: any, res: any) {
       headers["X-API-Key"] = key;
     }
 
-    const r = await fetch(url, { headers });
+    for (const url of candidates) {
+      try {
+        const r = await fetch(url, { headers });
+        const contentType = r.headers.get("content-type") || "";
+        const isJson = contentType.includes("application/json");
 
-    const contentType = r.headers.get("content-type") || "";
-    const isJson = contentType.includes("application/json");
-
-    if (!r.ok) {
-      const bodyText = await r.text().catch(() => "");
-      return res.status(r.status).json({ ok: false, status: r.status, url, error: bodyText || "Upstream request failed" });
+        if (!r.ok) {
+          // try next candidate
+          continue;
+        }
+        const data = isJson ? await r.json() : await r.text();
+        return res.status(200).json({ ok: true, data, url });
+      } catch (_) {
+        // try next candidate
+      }
     }
 
-    const data = isJson ? await r.json() : await r.text();
-    return res.status(200).json({ ok: true, data });
+    return res.status(502).json({ ok: false, error: "All TON API candidates failed", candidates });
   } catch (e: any) {
     return res.status(500).json({ ok: false, error: e?.message || String(e) });
   }
