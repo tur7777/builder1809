@@ -4,11 +4,37 @@ import WalletGate from "@/components/WalletGate";
 
 export default function Make() {
   const [tonInfo, setTonInfo] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
-    fetch("/api/ton/info")
-      .then((r) => r.json())
-      .then(setTonInfo)
-      .catch(console.error);
+    let mounted = true;
+
+    async function loadTonInfo() {
+      setError(null);
+      const paths = ["/api/ton/info", `${window.location.origin}/api/ton/info`];
+
+      for (const p of paths) {
+        try {
+          const res = await fetch(p, { credentials: "same-origin" });
+          if (!res.ok) {
+            const text = await res.text().catch(() => "");
+            throw new Error(`HTTP ${res.status} - ${text}`);
+          }
+          const json = await res.json().catch(() => null);
+          if (!mounted) return;
+          setTonInfo(json);
+          return;
+        } catch (e: any) {
+          console.warn("fetch ton info failed for", p, e?.message || e);
+          if (p === paths[paths.length - 1]) setError(String(e?.message || e));
+        }
+      }
+    }
+
+    loadTonInfo();
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   return (
@@ -27,6 +53,12 @@ export default function Make() {
             Create a New Offer
           </Link>
         </WalletGate>
+
+        {error && (
+          <div className="mt-6 rounded-xl border border-red-600 bg-red-900/30 p-4 text-red-200 text-xs">
+            Failed to load TON info: {error}
+          </div>
+        )}
 
         {tonInfo?.ok && (
           <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-4 text-xs text-white/70">
