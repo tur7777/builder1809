@@ -23,7 +23,9 @@ export const tonChainInfo: RequestHandler = async (_req, res) => {
     const url = `${base.replace(/\/$/, "")}/v2/blockchain/info`;
     const key = process.env.TON_API_KEY;
     const r = await fetch(url, {
-      headers: key ? { Authorization: `Bearer ${key}`, "X-API-Key": key } : undefined,
+      headers: key
+        ? { Authorization: `Bearer ${key}`, "X-API-Key": key }
+        : undefined,
     });
     const data = await r.json();
     res.json({ ok: true, data });

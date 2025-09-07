@@ -11,12 +11,17 @@ export default async function handler(req: any, res: any) {
   if (req.method === "OPTIONS") return res.status(204).end();
 
   if (req.method === "GET") {
-    const items = await prisma.offer.findMany({ orderBy: { createdAt: "desc" } });
+    const items = await prisma.offer.findMany({
+      orderBy: { createdAt: "desc" },
+    });
     return res.status(200).json({ items });
   }
 
   if (req.method === "POST") {
-    const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
+    const body =
+      typeof req.body === "string"
+        ? JSON.parse(req.body || "{}")
+        : req.body || {};
     const { title, budgetTON } = body;
     if (!title || typeof budgetTON !== "number" || budgetTON < 0) {
       return res.status(400).json({ error: "Invalid payload" });
