@@ -1,15 +1,33 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import WalletGate from "@/components/WalletGate";
+import { useIsWalletConnected, useWalletAddress } from "@/hooks/useTon";
 
 export default function CreateOffer() {
   const [title, setTitle] = useState("");
   const [budget, setBudget] = useState("0.1");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const connected = useIsWalletConnected();
+  const address = useWalletAddress();
+
+  useEffect(() => {
+    if (connected && address) {
+      fetch("/api/users/upsert", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ address }),
+      }).catch(console.error);
+    }
+  }, [connected, address]);
 
   async function submit() {
+    if (!connected) {
+      alert("Please connect your TON wallet");
+      return;
+    }
     setLoading(true);
     try {
       const res = await fetch("/api/offers", {
@@ -32,12 +50,13 @@ export default function CreateOffer() {
     <div className="min-h-screen bg-[hsl(217,33%,9%)] text-white">
       <div className="mx-auto w-full max-w-2xl px-4 py-10">
         <h1 className="text-3xl font-bold">Create a New Offer</h1>
-        <p className="mt-2 text-white/70">
-          Define the title and budget in TON. Escrow and on-chain actions
-          подключим позже.
-        </p>
+        <WalletGate>
+          <p className="mt-2 text-white/70">
+            Define the title and budget in TON. Escrow and on-chain actions
+            подключим позже.
+          </p>
 
-        <div className="mt-6 space-y-4">
+          <div className="mt-6 space-y-4">
           <div>
             <label className="mb-2 block text-sm text-white/70">Title</label>
             <Input
@@ -67,6 +86,7 @@ export default function CreateOffer() {
             {loading ? "Creating..." : "Create Offer"}
           </Button>
         </div>
+        </WalletGate>
       </div>
     </div>
   );
