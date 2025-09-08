@@ -66,15 +66,21 @@ export default function Make() {
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
               <div>
                 <div className="text-white/60">Source</div>
-                <div className="font-mono break-all">{tonInfo.url || "n/a"}</div>
+                <div className="font-mono break-all">
+                  {tonInfo.url || "n/a"}
+                </div>
               </div>
               <div>
                 <div className="text-white/60">Version</div>
-                <div className="font-mono">{tonInfo?.data?.["8"]?.version ?? "n/a"}</div>
+                <div className="font-mono">
+                  {tonInfo?.data?.["8"]?.version ?? "n/a"}
+                </div>
               </div>
             </div>
             <details className="mt-3">
-              <summary className="cursor-pointer text-white/80 hover:text-white">Full JSON</summary>
+              <summary className="cursor-pointer text-white/80 hover:text-white">
+                Full JSON
+              </summary>
               <pre className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap break-all">
                 {JSON.stringify(tonInfo.data, null, 2)}
               </pre>
