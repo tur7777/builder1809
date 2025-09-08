@@ -22,50 +22,27 @@ export default function Take() {
 
       try {
         const { supabase } = await import("@/lib/supabase");
-        if (supabase) {
-          const { data, error } = await supabase
-            .from("offers")
-            .select("id,title,budgetTON,status,createdAt")
-            .order("createdAt", { ascending: false });
-          if (error) throw error;
-          if (!mounted) return;
-          setOffers(
-            (data || []).map((d: any) => ({
-              id: String(d.id ?? crypto.randomUUID()),
-              title: String(d.title ?? ""),
-              budgetTON: Number(d.budgetTON ?? 0),
-              status: String(d.status ?? "open"),
-              createdAt: String(d.createdAt ?? new Date().toISOString()),
-            })),
-          );
-          setLoading(false);
-          return;
-        }
-      } catch (e) {
-        // fall back to API below
-      }
-
-      const paths = ["/api/offers", `${window.location.origin}/api/offers`];
-      for (const p of paths) {
-        try {
-          const res = await fetch(p, { credentials: "same-origin" });
-          if (!res.ok) {
-            const text = await res.text().catch(() => "");
-            throw new Error(`HTTP ${res.status} - ${text}`);
-          }
-          const json = await res.json().catch(() => null);
-          if (!json || !mounted) return;
-          const items = Array.isArray(json.items) ? json.items : json;
-          setOffers(items || []);
-          setLoading(false);
-          return;
-        } catch (e: any) {
-          console.warn("fetch /api/offers failed for", p, e?.message || e);
-          if (p === paths[paths.length - 1]) {
-            setError(String(e?.message || e));
-            setLoading(false);
-          }
-        }
+        if (!supabase) throw new Error("Supabase is not configured");
+        const { data, error } = await supabase
+          .from("offers")
+          .select("id,title,budgetTON,status,createdAt")
+          .order("createdAt", { ascending: false });
+        if (error) throw error;
+        if (!mounted) return;
+        setOffers(
+          (data || []).map((d: any) => ({
+            id: String(d.id ?? crypto.randomUUID()),
+            title: String(d.title ?? ""),
+            budgetTON: Number(d.budgetTON ?? 0),
+            status: String(d.status ?? "open"),
+            createdAt: String(d.createdAt ?? new Date().toISOString()),
+          })),
+        );
+        setLoading(false);
+      } catch (e: any) {
+        if (!mounted) return;
+        setError(String(e?.message || e));
+        setLoading(false);
       }
     }
 
