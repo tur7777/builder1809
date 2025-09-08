@@ -47,7 +47,9 @@ export const tonChainInfo: RequestHandler = async (_req, res) => {
       }
     }
 
-    return res.status(502).json({ ok: false, error: "All TON API candidates failed", candidates });
+    return res
+      .status(502)
+      .json({ ok: false, error: "All TON API candidates failed", candidates });
   } catch (e) {
     res.status(500).json({ ok: false, error: String(e) });
   }
