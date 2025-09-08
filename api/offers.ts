@@ -1,11 +1,4 @@
-import prismaPkg from "@prisma/client";
-const { PrismaClient } = prismaPkg as any;
-
-const globalForPrisma = globalThis as unknown as {
-  prisma?: InstanceType<typeof PrismaClient>;
-};
-export const prisma = globalForPrisma.prisma ?? new PrismaClient();
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+import { getSupabaseServer } from "../server/lib/supabase";
 
 export default async function handler(req: any, res: any) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -13,25 +6,43 @@ export default async function handler(req: any, res: any) {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   if (req.method === "OPTIONS") return res.status(204).end();
 
-  if (req.method === "GET") {
-    const items = await prisma.offer.findMany({
-      orderBy: { createdAt: "desc" },
-    });
-    return res.status(200).json({ items });
-  }
+  try {
+    const supabase = getSupabaseServer();
 
-  if (req.method === "POST") {
-    const body =
-      typeof req.body === "string"
-        ? JSON.parse(req.body || "{}")
-        : req.body || {};
-    const { title, budgetTON } = body;
-    if (!title || typeof budgetTON !== "number" || budgetTON < 0) {
-      return res.status(400).json({ error: "Invalid payload" });
+    if (req.method === "GET") {
+      const { data, error } = await supabase
+        .from("offers")
+        .select("id,title,budgetTON,status,createdAt")
+        .order("createdAt", { ascending: false });
+      if (error) throw error;
+      return res.status(200).json({ items: data || [] });
     }
-    const offer = await prisma.offer.create({ data: { title, budgetTON } });
-    return res.status(201).json(offer);
-  }
 
-  return res.status(405).json({ error: "Method not allowed" });
+    if (req.method === "POST") {
+      const body =
+        typeof req.body === "string"
+          ? JSON.parse(req.body || "{}")
+          : req.body || {};
+      const { title, budgetTON } = body;
+      if (!title || typeof budgetTON !== "number" || budgetTON < 0) {
+        return res.status(400).json({ error: "Invalid payload" });
+      }
+      const { data, error } = await supabase
+        .from("offers")
+        .insert({
+          title,
+          budgetTON,
+          status: "open",
+          createdAt: new Date().toISOString(),
+        })
+        .select()
+        .single();
+      if (error) throw error;
+      return res.status(201).json(data);
+    }
+
+    return res.status(405).json({ error: "Method not allowed" });
+  } catch (e: any) {
+    return res.status(500).json({ error: e?.message || String(e) });
+  }
 }
