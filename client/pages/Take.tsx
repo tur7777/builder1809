@@ -29,13 +29,15 @@ export default function Take() {
             .order("createdAt", { ascending: false });
           if (error) throw error;
           if (!mounted) return;
-          setOffers((data || []).map((d: any) => ({
-            id: String(d.id ?? crypto.randomUUID()),
-            title: String(d.title ?? ""),
-            budgetTON: Number(d.budgetTON ?? 0),
-            status: String(d.status ?? "open"),
-            createdAt: String(d.createdAt ?? new Date().toISOString()),
-          })));
+          setOffers(
+            (data || []).map((d: any) => ({
+              id: String(d.id ?? crypto.randomUUID()),
+              title: String(d.title ?? ""),
+              budgetTON: Number(d.budgetTON ?? 0),
+              status: String(d.status ?? "open"),
+              createdAt: String(d.createdAt ?? new Date().toISOString()),
+            })),
+          );
           setLoading(false);
           return;
         }
