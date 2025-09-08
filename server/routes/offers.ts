@@ -19,7 +19,12 @@ export const createOffer: RequestHandler = async (req, res) => {
   const supabase = getSupabaseServer();
   const { data, error } = await supabase
     .from("offers")
-    .insert({ title, budgetTON, status: "open", createdAt: new Date().toISOString() })
+    .insert({
+      title,
+      budgetTON,
+      status: "open",
+      createdAt: new Date().toISOString(),
+    })
     .select()
     .single();
   if (error) return res.status(500).json({ error: error.message });
