@@ -3,6 +3,7 @@ import { getSupabaseServer } from "../lib/supabase";
 
 export const listOffers: RequestHandler = async (_req, res) => {
   const supabase = getSupabaseServer();
+  if (!supabase) return res.json({ items: [] });
   const { data, error } = await supabase
     .from("offers")
     .select("id,title,budgetTON,status,createdAt")
@@ -17,6 +18,7 @@ export const createOffer: RequestHandler = async (req, res) => {
     return res.status(400).json({ error: "Invalid payload" });
   }
   const supabase = getSupabaseServer();
+  if (!supabase) return res.status(501).json({ error: "Supabase not configured on server" });
   const { data, error } = await supabase
     .from("offers")
     .insert({
