@@ -31,23 +31,14 @@ export default function CreateOffer() {
     setLoading(true);
     try {
       const { supabase } = await import("@/lib/supabase");
-      if (supabase) {
-        const { error } = await supabase.from("offers").insert({
-          title,
-          budgetTON: Number(budget),
-          status: "open",
-          createdAt: new Date().toISOString(),
-        });
-        if (error) throw error;
-      } else {
-        const res = await fetch("/api/offers", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ title, budgetTON: Number(budget) }),
-        });
-        if (!res.ok) throw new Error(await res.text());
-        await res.json();
-      }
+      if (!supabase) throw new Error("Supabase is not configured");
+      const { error } = await supabase.from("offers").insert({
+        title,
+        budgetTON: Number(budget),
+        status: "open",
+        createdAt: new Date().toISOString(),
+      });
+      if (error) throw error;
       navigate("/take");
     } catch (e) {
       console.error(e);
