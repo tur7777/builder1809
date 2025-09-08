@@ -63,9 +63,22 @@ export default function Make() {
         {tonInfo?.ok && (
           <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-4 text-xs text-white/70">
             <div className="mb-2 font-semibold text-white">TON Chain Info</div>
-            <pre className="whitespace-pre-wrap break-all">
-              {JSON.stringify(tonInfo.data, null, 2)}
-            </pre>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <div>
+                <div className="text-white/60">Source</div>
+                <div className="font-mono break-all">{tonInfo.url || "n/a"}</div>
+              </div>
+              <div>
+                <div className="text-white/60">Version</div>
+                <div className="font-mono">{tonInfo?.data?.["8"]?.version ?? "n/a"}</div>
+              </div>
+            </div>
+            <details className="mt-3">
+              <summary className="cursor-pointer text-white/80 hover:text-white">Full JSON</summary>
+              <pre className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap break-all">
+                {JSON.stringify(tonInfo.data, null, 2)}
+              </pre>
+            </details>
           </div>
         )}
       </div>
