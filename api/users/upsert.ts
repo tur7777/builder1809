@@ -17,6 +17,7 @@ export default async function handler(req: any, res: any) {
     if (!address) return res.status(400).json({ error: "address required" });
 
     const supabase = getSupabaseServer();
+    if (!supabase) return res.status(200).json({ ok: true });
     const { data, error } = await supabase
       .from("users")
       .upsert({ address }, { onConflict: "address" })
