@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pnpm run prisma:generate && pnpm run prisma:deploy && pnpm run build:client",
+  "buildCommand": "pnpm run prisma:generate && pnpm run build:client",
   "outputDirectory": "dist/spa",
   "framework": null,
   "rewrites": [
