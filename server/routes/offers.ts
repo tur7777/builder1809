@@ -1,12 +1,14 @@
 import type { RequestHandler } from "express";
-import prismaPkg from "@prisma/client";
-const { PrismaClient } = prismaPkg as any;
-
-const prisma = new PrismaClient();
+import { getSupabaseServer } from "../lib/supabase";
 
 export const listOffers: RequestHandler = async (_req, res) => {
-  const items = await prisma.offer.findMany({ orderBy: { createdAt: "desc" } });
-  res.json({ items });
+  const supabase = getSupabaseServer();
+  const { data, error } = await supabase
+    .from("offers")
+    .select("id,title,budgetTON,status,createdAt")
+    .order("createdAt", { ascending: false });
+  if (error) return res.status(500).json({ error: error.message });
+  res.json({ items: data || [] });
 };
 
 export const createOffer: RequestHandler = async (req, res) => {
@@ -14,8 +16,14 @@ export const createOffer: RequestHandler = async (req, res) => {
   if (!title || typeof budgetTON !== "number" || budgetTON < 0) {
     return res.status(400).json({ error: "Invalid payload" });
   }
-  const offer = await prisma.offer.create({ data: { title, budgetTON } });
-  res.status(201).json(offer);
+  const supabase = getSupabaseServer();
+  const { data, error } = await supabase
+    .from("offers")
+    .insert({ title, budgetTON, status: "open", createdAt: new Date().toISOString() })
+    .select()
+    .single();
+  if (error) return res.status(500).json({ error: error.message });
+  res.status(201).json(data);
 };
 
 export const tonChainInfo: RequestHandler = async (_req, res) => {
