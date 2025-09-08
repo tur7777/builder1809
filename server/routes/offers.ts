@@ -18,7 +18,8 @@ export const createOffer: RequestHandler = async (req, res) => {
     return res.status(400).json({ error: "Invalid payload" });
   }
   const supabase = getSupabaseServer();
-  if (!supabase) return res.status(501).json({ error: "Supabase not configured on server" });
+  if (!supabase)
+    return res.status(501).json({ error: "Supabase not configured on server" });
   const { data, error } = await supabase
     .from("offers")
     .insert({

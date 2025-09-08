@@ -29,7 +29,9 @@ export default async function handler(req: any, res: any) {
         return res.status(400).json({ error: "Invalid payload" });
       }
       if (!supabase)
-        return res.status(501).json({ error: "Supabase not configured on server" });
+        return res
+          .status(501)
+          .json({ error: "Supabase not configured on server" });
       const { data, error } = await supabase
         .from("offers")
         .insert({
