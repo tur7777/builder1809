@@ -1,5 +1,6 @@
 import type { RequestHandler } from "express";
-import { PrismaClient } from "@prisma/client";
+import prismaPkg from "@prisma/client";
+const { PrismaClient } = prismaPkg as any;
 
 const prisma = new PrismaClient();
 
