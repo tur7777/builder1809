@@ -10,6 +10,7 @@ export default async function handler(req: any, res: any) {
     const supabase = getSupabaseServer();
 
     if (req.method === "GET") {
+      if (!supabase) return res.status(200).json({ items: [] });
       const { data, error } = await supabase
         .from("offers")
         .select("id,title,budgetTON,status,createdAt")
@@ -27,6 +28,8 @@ export default async function handler(req: any, res: any) {
       if (!title || typeof budgetTON !== "number" || budgetTON < 0) {
         return res.status(400).json({ error: "Invalid payload" });
       }
+      if (!supabase)
+        return res.status(501).json({ error: "Supabase not configured on server" });
       const { data, error } = await supabase
         .from("offers")
         .insert({
