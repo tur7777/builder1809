@@ -44,7 +44,7 @@ export default function Header({ children }: { children?: React.ReactNode }) {
         </div>
       </header>
       {children}
-      <div className="h-[70px]" />
+      <div className="h-[100px]" />
       <BottomNav />
     </TonConnectUIProvider>
   );
