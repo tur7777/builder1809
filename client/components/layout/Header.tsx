@@ -31,7 +31,7 @@ export default function Header({ children }: { children?: React.ReactNode }) {
     <TonConnectUIProvider manifestUrl={manifestUrl}>
       <UpsertOnConnect />
       <header className="sticky top-0 z-30 border-b border-white/10 bg-[hsl(217,33%,9%)]/80 backdrop-blur">
-        <div className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-4 mt-[60px] sm:mt-0">
+        <div className="mx-auto mt-[69px] sm:mt-[60px] flex h-14 w-full max-w-5xl items-center justify-between px-4">
           <Link
             to="/"
             className="text-sm font-semibold text-white/80 hover:text-white"
@@ -44,6 +44,8 @@ export default function Header({ children }: { children?: React.ReactNode }) {
         </div>
       </header>
       {children}
+      <div className="h-[70px]" />
+      <BottomNav />
     </TonConnectUIProvider>
   );
 }
