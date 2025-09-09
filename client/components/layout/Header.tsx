@@ -5,6 +5,7 @@ import {
 } from "@tonconnect/ui-react";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
+import BottomNav from "./BottomNav";
 
 function UpsertOnConnect() {
   const wallet = useTonWallet();
