@@ -11,7 +11,7 @@ export default function BottomNav() {
   const { pathname } = useLocation();
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-30 h-[70px] border-t border-white/10 bg-[hsl(217,33%,9%)]/80 backdrop-blur"
+      className="fixed inset-x-0 bottom-0 z-50 h-[70px] border-t border-white/10 bg-[hsl(217,33%,9%)]/70 supports-[backdrop-filter]:bg-[hsl(217,33%,9%)]/50 supports-[backdrop-filter]:backdrop-blur-md backdrop-saturate-150"
       role="navigation"
       aria-label="Bottom Navigation"
     >
