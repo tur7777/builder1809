@@ -30,14 +30,16 @@ export default function Header({ children }: { children?: React.ReactNode }) {
     <TonConnectUIProvider manifestUrl={manifestUrl}>
       <UpsertOnConnect />
       <header className="sticky top-0 z-30 border-b border-white/10 bg-[hsl(217,33%,9%)]/80 backdrop-blur">
-        <div className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-4">
+        <div className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-4 mt-[60px] sm:mt-0">
           <Link
             to="/"
             className="text-sm font-semibold text-white/80 hover:text-white"
           >
             FreelTON
           </Link>
-          <TonConnectButton className="[&_*]:!font-medium" />
+          <div className="w-fit">
+            <TonConnectButton className="[&_*]:!font-medium" />
+          </div>
         </div>
       </header>
       {children}
