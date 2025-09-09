@@ -101,12 +101,6 @@ export default function Index() {
         </div>
 
         <Separator className="my-4 bg-white/10" />
-
-        <div className="space-y-1">
-          {BOTS.map((b, idx) => (
-            <BotRow key={idx} item={b} />
-          ))}
-        </div>
       </div>
     </div>
   );
