@@ -10,14 +10,32 @@ import BottomNav from "./BottomNav";
 function UpsertOnConnect() {
   const wallet = useTonWallet();
   useEffect(() => {
+    let mounted = true;
+    let t: any = null;
     const address = wallet?.account?.address;
+
+    // Debounce and guard against spurious connect/disconnect events from extensions
     if (address) {
-      fetch("/api/users/upsert", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ address }),
-      }).catch(console.error);
+      t = setTimeout(async () => {
+        if (!mounted) return;
+        try {
+          // call server to upsert user, but don't allow exceptions to bubble
+          await fetch("/api/users/upsert", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ address }),
+          });
+        } catch (e) {
+          // ignore network/extension messaging errors
+          console.warn("UpsertOnConnect failed:", e);
+        }
+      }, 400);
     }
+
+    return () => {
+      mounted = false;
+      if (t) clearTimeout(t);
+    };
   }, [wallet?.account?.address]);
   return null;
 }
