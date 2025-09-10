@@ -49,7 +49,14 @@ function BotRow({ item }: { item: BotItem }) {
   );
 }
 
-interface Offer { id: string; title: string; budgetTON: number; status: string; createdAt: string; imageUrl?: string | null }
+interface Offer {
+  id: string;
+  title: string;
+  budgetTON: number;
+  status: string;
+  createdAt: string;
+  imageUrl?: string | null;
+}
 
 export default function Index() {
   const [offers, setOffers] = useState<Offer[]>([]);
@@ -69,14 +76,16 @@ export default function Index() {
           .limit(20);
         if (error) throw error;
         if (!mounted) return;
-        setOffers((data || []).map((d: any) => ({
-          id: String(d.id),
-          title: String(d.title ?? ""),
-          budgetTON: Number(d.budgetTON ?? 0),
-          status: String(d.status ?? "open"),
-          createdAt: String(d.createdAt ?? new Date().toISOString()),
-          imageUrl: d.imageUrl ?? null,
-        })));
+        setOffers(
+          (data || []).map((d: any) => ({
+            id: String(d.id),
+            title: String(d.title ?? ""),
+            budgetTON: Number(d.budgetTON ?? 0),
+            status: String(d.status ?? "open"),
+            createdAt: String(d.createdAt ?? new Date().toISOString()),
+            imageUrl: d.imageUrl ?? null,
+          })),
+        );
       } catch (e: any) {
         if (!mounted) return;
         setError(String(e?.message || e));
@@ -84,7 +93,9 @@ export default function Index() {
         if (mounted) setLoading(false);
       }
     })();
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   return (
@@ -141,30 +152,47 @@ export default function Index() {
         <Separator className="my-4 bg-white/10" />
 
         {error && (
-          <div className="rounded-lg border border-red-600 bg-red-900/30 p-3 text-xs text-red-200">{error}</div>
+          <div className="rounded-lg border border-red-600 bg-red-900/30 p-3 text-xs text-red-200">
+            {error}
+          </div>
         )}
 
         <div className="grid grid-cols-2 gap-3 sm:gap-4">
-          {loading && Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="rounded-xl border border-white/10 bg-white/5 p-3">
-              <div className="mb-2 h-24 w-full rounded-lg bg-white/10" />
-              <div className="h-4 w-3/4 rounded bg-white/10" />
-            </div>
-          ))}
-
-          {!loading && offers.map((o) => (
-            <div key={o.id} className="rounded-xl border border-white/10 bg-white/5 p-3">
-              <div className="mb-2 overflow-hidden rounded-lg bg-white/10">
-                {o.imageUrl ? (
-                  <img src={o.imageUrl} alt={o.title} className="h-24 w-full object-cover" />
-                ) : (
-                  <div className="h-24 w-full bg-gradient-to-br from-white/10 to-white/5" />
-                )}
+          {loading &&
+            Array.from({ length: 6 }).map((_, i) => (
+              <div
+                key={i}
+                className="rounded-xl border border-white/10 bg-white/5 p-3"
+              >
+                <div className="mb-2 h-24 w-full rounded-lg bg-white/10" />
+                <div className="h-4 w-3/4 rounded bg-white/10" />
               </div>
-              <div className="truncate text-sm font-medium">{o.title}</div>
-              <div className="mt-1 text-xs text-white/60">{o.budgetTON} TON • {new Date(o.createdAt).toLocaleDateString()}</div>
-            </div>
-          ))}
+            ))}
+
+          {!loading &&
+            offers.map((o) => (
+              <div
+                key={o.id}
+                className="rounded-xl border border-white/10 bg-white/5 p-3"
+              >
+                <div className="mb-2 overflow-hidden rounded-lg bg-white/10">
+                  {o.imageUrl ? (
+                    <img
+                      src={o.imageUrl}
+                      alt={o.title}
+                      className="h-24 w-full object-cover"
+                    />
+                  ) : (
+                    <div className="h-24 w-full bg-gradient-to-br from-white/10 to-white/5" />
+                  )}
+                </div>
+                <div className="truncate text-sm font-medium">{o.title}</div>
+                <div className="mt-1 text-xs text-white/60">
+                  {o.budgetTON} TON •{" "}
+                  {new Date(o.createdAt).toLocaleDateString()}
+                </div>
+              </div>
+            ))}
 
           {!loading && offers.length === 0 && (
             <div className="col-span-2 rounded-xl border border-white/10 bg-white/5 p-4 text-center text-white/70">
