@@ -9,7 +9,7 @@ export default async function handler(req: any, res: any) {
   try {
     if (req.method === "GET") {
       const items = await prisma.offer.findMany({
-        select: { id: true, title: true, budgetTON: true, status: true, createdAt: true },
+        select: { id: true, title: true, description: true, budgetTON: true, status: true, createdAt: true },
         orderBy: { createdAt: "desc" },
       });
       return res.status(200).json({ items });
@@ -20,12 +20,12 @@ export default async function handler(req: any, res: any) {
         typeof req.body === "string"
           ? JSON.parse(req.body || "{}")
           : req.body || {};
-      const { title, budgetTON } = body;
+      const { title, description = "", budgetTON } = body;
       if (!title || typeof budgetTON !== "number" || budgetTON < 0) {
         return res.status(400).json({ error: "Invalid payload" });
       }
       const created = await prisma.offer.create({
-        data: { title, budgetTON, status: "open" },
+        data: { title, description, budgetTON, status: "open" },
       });
       return res.status(201).json(created);
     }
