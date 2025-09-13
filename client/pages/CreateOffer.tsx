@@ -30,15 +30,12 @@ export default function CreateOffer() {
     }
     setLoading(true);
     try {
-      const { supabase } = await import("@/lib/supabase");
-      if (!supabase) throw new Error("Supabase is not configured");
-      const { error } = await supabase.from("offers").insert({
-        title,
-        budgetTON: Number(budget),
-        status: "open",
-        createdAt: new Date().toISOString(),
+      const r = await fetch("/api/offers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, budgetTON: Number(budget) }),
       });
-      if (error) throw error;
+      if (!r.ok) throw new Error("Failed to create offer");
       navigate("/take");
     } catch (e) {
       console.error(e);
