@@ -1,4 +1,4 @@
-import { getSupabaseServer } from "../../server/lib/supabase";
+import { prisma } from "../../server/lib/prisma";
 
 export default async function handler(req: any, res: any) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -16,16 +16,13 @@ export default async function handler(req: any, res: any) {
     const address = String(body.address || "").trim();
     if (!address) return res.status(400).json({ error: "address required" });
 
-    const supabase = getSupabaseServer();
-    if (!supabase) return res.status(200).json({ ok: true });
-    const { data, error } = await supabase
-      .from("users")
-      .upsert({ address }, { onConflict: "address" })
-      .select()
-      .single();
-    if (error) throw error;
+    const user = await prisma.user.upsert({
+      where: { address },
+      update: {},
+      create: { address },
+    });
 
-    return res.status(200).json({ ok: true, user: data });
+    return res.status(200).json({ ok: true, user });
   } catch (e: any) {
     return res.status(500).json({ ok: false, error: e?.message || String(e) });
   }

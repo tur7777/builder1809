@@ -1,15 +1,19 @@
 import type { RequestHandler } from "express";
-import { getSupabaseServer } from "../lib/supabase";
+import { prisma } from "../lib/prisma";
+
+const TON_API_BASE = process.env.TON_API_BASE || "https://tonapi.io";
+const TON_API_KEY = process.env.TON_API_KEY || "";
 
 export const listOffers: RequestHandler = async (_req, res) => {
-  const supabase = getSupabaseServer();
-  if (!supabase) return res.json({ items: [] });
-  const { data, error } = await supabase
-    .from("offers")
-    .select("id,title,budgetTON,status,createdAt")
-    .order("createdAt", { ascending: false });
-  if (error) return res.status(500).json({ error: error.message });
-  res.json({ items: data || [] });
+  try {
+    const items = await prisma.offer.findMany({
+      select: { id: true, title: true, budgetTON: true, status: true, createdAt: true },
+      orderBy: { createdAt: "desc" },
+    });
+    res.json({ items });
+  } catch (e: any) {
+    res.status(500).json({ error: e?.message || String(e) });
+  }
 };
 
 export const createOffer: RequestHandler = async (req, res) => {
@@ -17,37 +21,28 @@ export const createOffer: RequestHandler = async (req, res) => {
   if (!title || typeof budgetTON !== "number" || budgetTON < 0) {
     return res.status(400).json({ error: "Invalid payload" });
   }
-  const supabase = getSupabaseServer();
-  if (!supabase)
-    return res.status(501).json({ error: "Supabase not configured on server" });
-  const { data, error } = await supabase
-    .from("offers")
-    .insert({
-      title,
-      budgetTON,
-      status: "open",
-      createdAt: new Date().toISOString(),
-    })
-    .select()
-    .single();
-  if (error) return res.status(500).json({ error: error.message });
-  res.status(201).json(data);
+  try {
+    const created = await prisma.offer.create({
+      data: { title, budgetTON, status: "open" },
+    });
+    res.status(201).json(created);
+  } catch (e: any) {
+    res.status(500).json({ error: e?.message || String(e) });
+  }
 };
 
 export const tonChainInfo: RequestHandler = async (_req, res) => {
   try {
-    const base = process.env.TON_API_BASE || "https://tonapi.io"; // allow testnet or TON Access
-    const origin = base.replace(/\/$/, "");
+    const origin = TON_API_BASE.replace(/\/$/, "");
     const candidates = [
       `${origin}/v2/blockchain/info`,
       `${origin}/v2/blockchain/config`,
     ];
-    const key = process.env.TON_API_KEY;
 
     const headers: Record<string, string> = { Accept: "application/json" };
-    if (key) {
-      headers["Authorization"] = `Bearer ${key}`;
-      headers["X-API-Key"] = key;
+    if (TON_API_KEY) {
+      headers["Authorization"] = `Bearer ${TON_API_KEY}`;
+      headers["X-API-Key"] = TON_API_KEY;
     }
 
     for (const url of candidates) {
