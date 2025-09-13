@@ -8,30 +8,11 @@ DATABASE_URL
 TON_API_BASE
 - server/routes/offers.ts
 - api/ton/info.ts
+- server/index.ts
 
 TON_API_KEY
 - server/routes/offers.ts
 - api/ton/info.ts
-
-NEXT_PUBLIC_SUPABASE_URL
-- client/lib/supabase.ts
-
-NEXT_PUBLIC_SUPABASE_ANON_KEY
-- client/lib/supabase.ts
-
-SUPABASE_URL
-- server/lib/supabase.ts
-
-SUPABASE_ANON_KEY
-- server/lib/supabase.ts
-
-VITE_SUPABASE_URL (fallback)
-- client/lib/supabase.ts
-- server/lib/supabase.ts
-
-VITE_SUPABASE_ANON_KEY (fallback)
-- client/lib/supabase.ts
-- server/lib/supabase.ts
 
 PING_MESSAGE
 - server/index.ts
