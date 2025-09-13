@@ -5,7 +5,7 @@ import { TON_API_BASE, TON_API_KEY } from "../config";
 export const listOffers: RequestHandler = async (_req, res) => {
   try {
     const items = await prisma.offer.findMany({
-      select: { id: true, title: true, budgetTON: true, status: true, createdAt: true },
+      select: { id: true, title: true, description: true, budgetTON: true, status: true, createdAt: true },
       orderBy: { createdAt: "desc" },
     });
     res.json({ items });
