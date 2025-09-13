@@ -6,6 +6,8 @@ import { createOffer, listOffers, tonChainInfo } from "./routes/offers";
 import { upsertUser } from "./routes/users";
 
 import { PING_MESSAGE, TON_API_BASE } from "./config";
+import { getUserByAddress, setNickname, upsertUser } from "./routes/users";
+import { resetDatabase } from "./routes/admin";
 
 export function createServer() {
   const app = express();
@@ -24,6 +26,8 @@ export function createServer() {
 
   // Users API
   app.post("/api/users/upsert", upsertUser);
+  app.get("/api/users/:address", getUserByAddress);
+  app.post("/api/users/set-nickname", setNickname);
 
   // Offers API
   app.get("/api/offers", listOffers);
@@ -31,6 +35,9 @@ export function createServer() {
 
   // TON chain info proxy
   app.get("/api/ton/info", tonChainInfo);
+
+  // Admin
+  app.post("/api/admin/reset", resetDatabase);
 
   // Serve TonConnect manifest with CORS to satisfy wallets
   app.get("/tonconnect-manifest.json", async (req, res) => {
