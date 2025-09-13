@@ -21,16 +21,12 @@ export default function Take() {
       setError(null);
 
       try {
-        const { supabase } = await import("@/lib/supabase");
-        if (!supabase) throw new Error("Supabase is not configured");
-        const { data, error } = await supabase
-          .from("offers")
-          .select("id,title,budgetTON,status,createdAt")
-          .order("createdAt", { ascending: false });
-        if (error) throw error;
+        const r = await fetch("/api/offers");
         if (!mounted) return;
+        if (!r.ok) throw new Error(`Failed: ${r.status}`);
+        const json = await r.json();
         setOffers(
-          (data || []).map((d: any) => ({
+          (json.items || []).map((d: any) => ({
             id: String(d.id ?? crypto.randomUUID()),
             title: String(d.title ?? ""),
             budgetTON: Number(d.budgetTON ?? 0),
