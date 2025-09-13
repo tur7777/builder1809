@@ -1,21 +1,17 @@
 Environment variables usage map
 
-DATABASE_URL
-- prisma/schema.prisma
-- server/lib/prisma.ts
-- db.js
+Centralized config: server/config.ts
+- DATABASE_URL
+- TON_API_BASE
+- TON_API_KEY
+- PING_MESSAGE
+- PORT
 
-TON_API_BASE
-- server/routes/offers.ts
-- api/ton/info.ts
-- server/index.ts
-
-TON_API_KEY
-- server/routes/offers.ts
-- api/ton/info.ts
-
-PING_MESSAGE
-- server/index.ts
-
-PORT
-- server/node-build.ts
+Referenced by:
+- server/lib/prisma.ts (DATABASE_URL)
+- server/routes/offers.ts (TON_API_BASE, TON_API_KEY)
+- api/ton/info.ts (TON_API_BASE, TON_API_KEY)
+- server/index.ts (PING_MESSAGE, TON_API_BASE)
+- server/node-build.ts (PORT)
+- prisma/schema.prisma (DATABASE_URL)
+- db.js (DATABASE_URL)
