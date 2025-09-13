@@ -13,12 +13,40 @@ enum OfferStatus {
   done
 }
 
+enum UserType {
+  freelancer
+  employer
+}
+
+enum JobStatus {
+  open
+  in_progress
+  completed
+}
+
 model User {
   id        String   @id @default(cuid())
   address   String?  @unique
   createdAt DateTime @default(now())
-  offers    Offer[]
-  reviews   Review[]
+
+  // Profile extensions
+  name        String?
+  avatarUrl   String?
+  type        UserType?
+  skills      String[] @default([])
+  experience  String?
+  reputation  Float    @default(0)
+  joinedDate  DateTime @default(now())
+  bio         String?  @default("")
+
+  // Relations
+  offers           Offer[]
+  reviews          Review[] @relation("ReviewAuthor")
+  reviewsWritten   Review[] @relation("ReviewReviewer")
+  reviewsReceived  Review[] @relation("ReviewReviewee")
+
+  jobsPosted   Job[] @relation("UserJobsAsEmployer")
+  jobsTaken    Job[] @relation("UserJobsAsFreelancer")
 }
 
 model Offer {
@@ -29,9 +57,29 @@ model Offer {
   createdAt  DateTime     @default(now())
   creatorId  String?
   creator    User?        @relation(fields: [creatorId], references: [id])
-  reviews    Review[]
+  reviews    Review[]     @relation("OfferReviews")
 
   @@index([createdAt])
+}
+
+model Job {
+  id           String     @id @default(cuid())
+  title        String
+  description  String
+  requirements String[]   @default([])
+  payment      Float
+  status       JobStatus  @default(open)
+  postedDate   DateTime   @default(now())
+
+  employerId String
+  employer   User        @relation("UserJobsAsEmployer", fields: [employerId], references: [id])
+
+  freelancerId String?
+  freelancer   User?       @relation("UserJobsAsFreelancer", fields: [freelancerId], references: [id])
+
+  reviews Review[]
+
+  @@index([postedDate])
 }
 
 model Review {
@@ -39,8 +87,25 @@ model Review {
   rating    Int
   comment   String?
   createdAt DateTime @default(now())
-  offerId   String
-  offer     Offer    @relation(fields: [offerId], references: [id])
-  authorId  String?
-  author    User?    @relation(fields: [authorId], references: [id])
+
+  // Link to Offer (legacy)
+  offerId String?
+  offer   Offer?   @relation("OfferReviews", fields: [offerId], references: [id])
+
+  // Link to Job (new)
+  jobId String?
+  job   Job?     @relation(fields: [jobId], references: [id])
+
+  // Participants
+  authorId   String?
+  author     User?    @relation("ReviewAuthor", fields: [authorId], references: [id])
+
+  reviewerId String?
+  reviewer   User?    @relation("ReviewReviewer", fields: [reviewerId], references: [id])
+
+  revieweeId String?
+  reviewee   User?    @relation("ReviewReviewee", fields: [revieweeId], references: [id])
+
+  // Explicit date field matching TS type
+  date DateTime @default(now())
 }
