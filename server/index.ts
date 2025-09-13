@@ -5,7 +5,7 @@ import { handleDemo } from "./routes/demo";
 import { createOffer, listOffers, tonChainInfo } from "./routes/offers";
 import { upsertUser } from "./routes/users";
 
-const PING_MESSAGE = process.env.PING_MESSAGE ?? "ping";
+import { PING_MESSAGE, TON_API_BASE } from "./config";
 
 export function createServer() {
   const app = express();
@@ -37,7 +37,6 @@ export function createServer() {
     try {
       const base = `${req.protocol}://${req.get("host")}`;
       const origin = base.replace(/\/$/, "");
-      const TON_API_BASE = process.env.TON_API_BASE || "https://tonapi.io";
       const tonServer = (TON_API_BASE || "").replace(/\/$/, "");
 
       const manifest = {

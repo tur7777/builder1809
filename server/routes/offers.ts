@@ -1,8 +1,6 @@
 import type { RequestHandler } from "express";
 import { prisma } from "../lib/prisma";
-
-const TON_API_BASE = process.env.TON_API_BASE || "https://tonapi.io";
-const TON_API_KEY = process.env.TON_API_KEY || "";
+import { TON_API_BASE, TON_API_KEY } from "../config";
 
 export const listOffers: RequestHandler = async (_req, res) => {
   try {

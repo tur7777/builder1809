@@ -2,8 +2,9 @@ import path from "path";
 import { createServer } from "./index";
 import * as express from "express";
 
+import { PORT } from "./config";
 const app = createServer();
-const port = process.env.PORT || 3000;
+const port = PORT;
 
 // In production, serve the built SPA files
 const __dirname = import.meta.dirname;
