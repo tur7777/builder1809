@@ -8,6 +8,7 @@ import { useIsWalletConnected, useWalletAddress } from "@/hooks/useTon";
 export default function CreateOffer() {
   const [title, setTitle] = useState("");
   const [budget, setBudget] = useState("0.1");
+  const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const connected = useIsWalletConnected();
@@ -33,7 +34,7 @@ export default function CreateOffer() {
       const r = await fetch("/api/offers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, budgetTON: Number(budget) }),
+        body: JSON.stringify({ title, description, budgetTON: Number(budget) }),
       });
       if (!r.ok) throw new Error("Failed to create offer");
       navigate("/take");
@@ -66,6 +67,15 @@ export default function CreateOffer() {
               />
             </div>
             <div>
+              <label className="mb-2 block text-sm text-white/70">Description</label>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Describe the scope, deliverables, and milestones"
+                className="min-h-28 w-full rounded-md bg-white/5 text-white border border-white/10 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/40"
+              />
+            </div>
+            <div>
               <label className="mb-2 block text-sm text-white/70">
                 Budget (TON)
               </label>
@@ -84,6 +94,7 @@ export default function CreateOffer() {
             >
               {loading ? "Creating..." : "Create Offer"}
             </Button>
+            <div className="text-xs text-white/50">All fields can be edited later.</div>
           </div>
         </WalletGate>
       </div>
