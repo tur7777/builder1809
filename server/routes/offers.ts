@@ -15,13 +15,13 @@ export const listOffers: RequestHandler = async (_req, res) => {
 };
 
 export const createOffer: RequestHandler = async (req, res) => {
-  const { title, budgetTON } = req.body ?? {};
+  const { title, description = "", budgetTON } = req.body ?? {};
   if (!title || typeof budgetTON !== "number" || budgetTON < 0) {
     return res.status(400).json({ error: "Invalid payload" });
   }
   try {
     const created = await prisma.offer.create({
-      data: { title, budgetTON, status: "open" },
+      data: { title, description, budgetTON, status: "open" },
     });
     res.status(201).json(created);
   } catch (e: any) {
