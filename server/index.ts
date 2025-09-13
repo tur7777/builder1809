@@ -36,12 +36,24 @@ export function createServer() {
   app.get("/tonconnect-manifest.json", async (req, res) => {
     try {
       const base = `${req.protocol}://${req.get("host")}`;
+      const origin = base.replace(/\/$/, "");
+      const TON_API_BASE = process.env.TON_API_BASE || "https://tonapi.io";
+      const tonServer = (TON_API_BASE || "").replace(/\/$/, "");
+
       const manifest = {
+        manifestVersion: "1.1",
         url: base,
         name: "FreelTON",
         iconUrl: `${base}/placeholder.svg`,
         termsOfUseUrl: `${base}/terms`,
         privacyPolicyUrl: `${base}/privacy`,
+        ton: {
+          default: {
+            name: "TON",
+            description: "TON blockchain",
+            servers: [{ name: "tonapi", url: tonServer }],
+          },
+        },
       };
       res.setHeader("Content-Type", "application/json; charset=utf-8");
       res.setHeader("Access-Control-Allow-Origin", "*");
