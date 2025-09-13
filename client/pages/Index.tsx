@@ -67,17 +67,12 @@ export default function Index() {
     let mounted = true;
     (async () => {
       try {
-        const { supabase } = await import("@/lib/supabase");
-        if (!supabase) throw new Error("Supabase is not configured");
-        const { data, error } = await supabase
-          .from("offers")
-          .select("id,title,budgetTON,status,createdAt,imageUrl")
-          .order("createdAt", { ascending: false })
-          .limit(20);
-        if (error) throw error;
+        const r = await fetch("/api/offers");
+        if (!r.ok) throw new Error(`Failed: ${r.status}`);
+        const json = await r.json();
         if (!mounted) return;
         setOffers(
-          (data || []).map((d: any) => ({
+          (json.items || []).map((d: any) => ({
             id: String(d.id),
             title: String(d.title ?? ""),
             budgetTON: Number(d.budgetTON ?? 0),
