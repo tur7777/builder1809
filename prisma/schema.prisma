@@ -33,6 +33,7 @@ model User {
   name        String?
   avatarUrl   String?
   type        UserType?
+  nickname    String?  @unique
   skills      String[] @default([])
   experience  String?
   reputation  Float    @default(0)
@@ -52,6 +53,7 @@ model User {
 model Offer {
   id         String       @id @default(cuid())
   title      String
+  description String? @default("")
   budgetTON  Float
   status     OfferStatus  @default(open)
   createdAt  DateTime     @default(now())
