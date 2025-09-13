@@ -5,18 +5,18 @@ export default async function handler(req: any, res: any) {
   if (req.method === "OPTIONS") return res.status(204).end();
 
   try {
-    const base = process.env.TON_API_BASE || "https://tonapi.io"; // e.g. https://testnet.tonapi.io or TON Access endpoint
-    const origin = base.replace(/\/$/, "");
+    const TON_API_BASE = process.env.TON_API_BASE || "https://tonapi.io";
+    const TON_API_KEY = process.env.TON_API_KEY || "";
+    const origin = TON_API_BASE.replace(/\/$/, "");
     const candidates = [
       `${origin}/v2/blockchain/info`,
       `${origin}/v2/blockchain/config`,
     ];
-    const key = process.env.TON_API_KEY;
 
     const headers: Record<string, string> = { Accept: "application/json" };
-    if (key) {
-      headers["Authorization"] = `Bearer ${key}`;
-      headers["X-API-Key"] = key;
+    if (TON_API_KEY) {
+      headers["Authorization"] = `Bearer ${TON_API_KEY}`;
+      headers["X-API-Key"] = TON_API_KEY;
     }
 
     for (const url of candidates) {

@@ -5,6 +5,8 @@ import { handleDemo } from "./routes/demo";
 import { createOffer, listOffers, tonChainInfo } from "./routes/offers";
 import { upsertUser } from "./routes/users";
 
+const PING_MESSAGE = process.env.PING_MESSAGE ?? "ping";
+
 export function createServer() {
   const app = express();
 
@@ -15,8 +17,7 @@ export function createServer() {
 
   // Example API routes
   app.get("/api/ping", (_req, res) => {
-    const ping = process.env.PING_MESSAGE ?? "ping";
-    res.json({ message: ping });
+    res.json({ message: PING_MESSAGE });
   });
 
   app.get("/api/demo", handleDemo);
