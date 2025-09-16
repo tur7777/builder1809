@@ -12,16 +12,18 @@ export default function Take() {
   const [offers, setOffers] = useState<Offer[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [q, setQ] = useState("");
 
   useEffect(() => {
     let mounted = true;
+    const ctrl = new AbortController();
 
     async function loadOffers() {
       setLoading(true);
       setError(null);
 
       try {
-        const r = await fetch("/api/offers");
+        const r = await fetch(`/api/offers${q ? `?q=${encodeURIComponent(q)}` : ""}` , { signal: ctrl.signal });
         if (!mounted) return;
         if (!r.ok) throw new Error(`Failed: ${r.status}`);
         const json = await r.json();
@@ -36,18 +38,20 @@ export default function Take() {
         );
         setLoading(false);
       } catch (e: any) {
-        if (!mounted) return;
+        if (!mounted || e?.name === "AbortError") return;
         setError(String(e?.message || e));
         setLoading(false);
       }
     }
 
-    loadOffers();
+    const t = setTimeout(loadOffers, 250);
 
     return () => {
       mounted = false;
+      ctrl.abort();
+      clearTimeout(t);
     };
-  }, []);
+  }, [q]);
 
   return (
     <div className="min-h-screen bg-[hsl(217,33%,9%)] text-white">
