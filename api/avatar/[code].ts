@@ -13,8 +13,8 @@ export default async function handler(req: any, res: any) {
       <stop offset="100%" stop-color="#6366f1"/>
     </linearGradient>
   </defs>
-  <rect width="100%" height="100%" rx="${Math.round(size/6)}" fill="url(#g)" />
-  <text x="50%" y="54%" font-size="${Math.round(size*0.6)}" text-anchor="middle" dominant-baseline="middle">${emoji}</text>
+  <rect width="100%" height="100%" rx="${Math.round(size / 6)}" fill="url(#g)" />
+  <text x="50%" y="54%" font-size="${Math.round(size * 0.6)}" text-anchor="middle" dominant-baseline="middle">${emoji}</text>
 </svg>`;
 
     res.setHeader("Content-Type", "image/svg+xml; charset=utf-8");

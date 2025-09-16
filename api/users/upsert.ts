@@ -17,9 +17,31 @@ export default async function handler(req: any, res: any) {
     if (!address) return res.status(400).json({ error: "address required" });
 
     const EMOJIS = [
-      "😎","🚀","🎯","🔥","🦄","🧠","💎","🍀","⚡","🌈","🐼","🐳","🦊","🐸","🐯","��","🐵","🐱","🐶","🦁"
+      "😎",
+      "🚀",
+      "🎯",
+      "🔥",
+      "🦄",
+      "🧠",
+      "💎",
+      "🍀",
+      "⚡",
+      "🌈",
+      "🐼",
+      "🐳",
+      "🦊",
+      "🐸",
+      "🐯",
+      "��",
+      "🐵",
+      "🐱",
+      "🐶",
+      "🦁",
     ];
-    const idx = Math.abs(Array.from(address).reduce((h,c)=>((h<<5)-h)+c.charCodeAt(0),0)) % EMOJIS.length;
+    const idx =
+      Math.abs(
+        Array.from(address).reduce((h, c) => (h << 5) - h + c.charCodeAt(0), 0),
+      ) % EMOJIS.length;
     const emoji = EMOJIS[idx];
     const avatarUrl = `/api/avatar/${encodeURIComponent(emoji)}`;
 

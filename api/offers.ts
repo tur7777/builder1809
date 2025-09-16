@@ -20,7 +20,14 @@ export default async function handler(req: any, res: any) {
         : undefined;
       const items = await prisma.offer.findMany({
         where,
-        select: { id: true, title: true, description: true, budgetTON: true, status: true, createdAt: true },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          budgetTON: true,
+          status: true,
+          createdAt: true,
+        },
         orderBy: { createdAt: "desc" },
       });
       return res.status(200).json({ items });

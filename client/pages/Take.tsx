@@ -23,7 +23,10 @@ export default function Take() {
       setError(null);
 
       try {
-        const r = await fetch(`/api/offers${q ? `?q=${encodeURIComponent(q)}` : ""}` , { signal: ctrl.signal });
+        const r = await fetch(
+          `/api/offers${q ? `?q=${encodeURIComponent(q)}` : ""}`,
+          { signal: ctrl.signal },
+        );
         if (!mounted) return;
         if (!r.ok) throw new Error(`Failed: ${r.status}`);
         const json = await r.json();

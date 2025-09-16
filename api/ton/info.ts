@@ -1,7 +1,10 @@
 export default async function handler(req: any, res: any) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-API-Key");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization, X-API-Key",
+  );
   if (req.method === "OPTIONS") return res.status(204).end();
 
   try {
@@ -35,7 +38,9 @@ export default async function handler(req: any, res: any) {
       }
     }
 
-    return res.status(502).json({ ok: false, error: "All TON API candidates failed", candidates });
+    return res
+      .status(502)
+      .json({ ok: false, error: "All TON API candidates failed", candidates });
   } catch (e: any) {
     return res.status(500).json({ ok: false, error: e?.message || String(e) });
   }
