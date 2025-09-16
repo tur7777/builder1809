@@ -11,6 +11,7 @@
     ]
   },
   "scripts": {
+    "predev": "prisma generate",
     "dev": "vite",
     "build": "npm run build:client && npm run build:server",
     "build:client": "vite build",
@@ -20,7 +21,8 @@
     "format.fix": "prettier --write .",
     "typecheck": "tsc",
     "prisma:generate": "prisma generate",
-    "prisma:deploy": "prisma migrate deploy"
+    "prisma:deploy": "prisma migrate deploy",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^5.16.2",
