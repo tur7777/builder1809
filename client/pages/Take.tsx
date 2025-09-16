@@ -62,7 +62,16 @@ export default function Take() {
           collaboration.
         </p>
 
-        <div className="mt-6 space-y-3">
+        <div className="mt-6">
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Search offers"
+            className="w-full rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:ring-2 focus:ring-primary/40"
+          />
+        </div>
+
+        <div className="mt-4 space-y-3">
           {loading && (
             <div className="rounded-lg border border-white/10 bg-white/5 p-4 text-white/70">
               Loading offers...
