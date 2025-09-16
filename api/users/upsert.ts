@@ -17,7 +17,9 @@ export default async function handler(req: any, res: any) {
       typeof req.body === "string"
         ? JSON.parse(req.body || "{}")
         : req.body || {};
-    const address = String(body.address || "").trim();
+    let address = String(body.address || "").trim();
+    // Basic guard: if address looks like raw wc:hex (e.g., 0:abcdef...), keep as-is; TonConnect usually provides base64url (UQ../EQ..)
+    // If later you share a raw example, we can implement precise conversion to base64url.
     if (!address) return res.status(400).json({ error: "address required" });
 
     const EMOJIS = [
