@@ -16,7 +16,7 @@ export default function Profile() {
 
           <div className="mt-6 space-y-4 rounded-xl border border-white/10 bg-white/5 p-4">
             <div>
-              <div className="text-xs text-white/60">Wallet Address</div>
+              <div className="text-xs text-white/60">Wallet Address (friendly)</div>
               <div className="font-mono break-all text-sm">
                 {address || "Not connected"}
               </div>
