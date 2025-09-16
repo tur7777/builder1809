@@ -1,4 +1,4 @@
-import { prisma } from "../server/lib/prisma";
+import { prisma } from "./_prisma";
 
 export default async function handler(req: any, res: any) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -8,7 +8,18 @@ export default async function handler(req: any, res: any) {
 
   try {
     if (req.method === "GET") {
+      const url = new URL(req.url || "http://localhost");
+      const q = String(url.searchParams.get("q") || "").trim();
+      const where = q
+        ? {
+            OR: [
+              { title: { contains: q, mode: "insensitive" as const } },
+              { description: { contains: q, mode: "insensitive" as const } },
+            ],
+          }
+        : undefined;
       const items = await prisma.offer.findMany({
+        where,
         select: { id: true, title: true, description: true, budgetTON: true, status: true, createdAt: true },
         orderBy: { createdAt: "desc" },
       });

@@ -5,7 +5,7 @@ export default async function handler(req: any, res: any) {
   if (req.method === "OPTIONS") return res.status(204).end();
 
   try {
-    const { TON_API_BASE, TON_API_KEY } = await import("../../server/config");
+    const { TON_API_BASE, TON_API_KEY } = await import("../_config");
     const origin = TON_API_BASE.replace(/\/$/, "");
     const candidates = [
       `${origin}/v2/blockchain/info`,

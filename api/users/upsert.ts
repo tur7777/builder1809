@@ -1,4 +1,4 @@
-import { prisma } from "../../server/lib/prisma";
+import { prisma } from "../_prisma";
 
 export default async function handler(req: any, res: any) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -16,10 +16,17 @@ export default async function handler(req: any, res: any) {
     const address = String(body.address || "").trim();
     if (!address) return res.status(400).json({ error: "address required" });
 
+    const EMOJIS = [
+      "😎","🚀","🎯","🔥","🦄","🧠","💎","🍀","⚡","🌈","🐼","🐳","🦊","🐸","🐯","��","🐵","🐱","🐶","🦁"
+    ];
+    const idx = Math.abs(Array.from(address).reduce((h,c)=>((h<<5)-h)+c.charCodeAt(0),0)) % EMOJIS.length;
+    const emoji = EMOJIS[idx];
+    const avatarUrl = `/api/avatar/${encodeURIComponent(emoji)}`;
+
     const user = await prisma.user.upsert({
       where: { address },
-      update: {},
-      create: { address },
+      update: { nickname: address, avatarUrl },
+      create: { address, nickname: address, avatarUrl },
     });
 
     return res.status(200).json({ ok: true, user });
