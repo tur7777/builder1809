@@ -26,7 +26,6 @@ export function createServer() {
   // Users API
   app.post("/api/users/upsert", upsertUser);
   app.get("/api/users/:address", getUserByAddress);
-  app.post("/api/users/set-nickname", setNickname);
 
   // Offers API
   app.get("/api/offers", listOffers);
