@@ -6,7 +6,7 @@
     { "source": "/api/(.*)", "destination": "/api/$1" },
     {
       "source": "/tonconnect-manifest.json",
-      "destination": "/tonconnect-manifest.json"
+      "destination": "/api/ton/manifest"
     },
     { "source": "/api/icon.png", "destination": "/api/icon.png" },
     { "source": "/placeholder.svg", "destination": "/placeholder.svg" },
@@ -15,6 +15,13 @@
   "headers": [
     {
       "source": "/tonconnect-manifest.json",
+      "headers": [
+        { "key": "Content-Type", "value": "application/json; charset=utf-8" },
+        { "key": "Access-Control-Allow-Origin", "value": "*" }
+      ]
+    },
+    {
+      "source": "/api/ton/manifest",
       "headers": [
         { "key": "Content-Type", "value": "application/json; charset=utf-8" },
         { "key": "Access-Control-Allow-Origin", "value": "*" }

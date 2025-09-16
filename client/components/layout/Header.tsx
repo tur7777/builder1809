@@ -44,8 +44,8 @@ function UpsertOnConnect() {
 export default function Header({ children }: { children?: React.ReactNode }) {
   const manifestUrl =
     typeof window !== "undefined"
-      ? `${window.location.origin}/tonconnect-manifest.json`
-      : "/tonconnect-manifest.json";
+      ? `${window.location.origin}/api/ton/manifest`
+      : "/api/ton/manifest";
 
   const { isAndroid } = useTelegramPlatform();
   const topOffsetClass = isAndroid ? "mt-[69px] sm:mt-[60px]" : "mt-0";
