@@ -1,7 +1,15 @@
 export default async function handler(req: any, res: any) {
   try {
-    const proto = (req.headers["x-forwarded-proto"] || req.protocol || "https").toString();
-    const host = (req.headers["x-forwarded-host"] || req.headers.host || "").toString();
+    const proto = (
+      req.headers["x-forwarded-proto"] ||
+      req.protocol ||
+      "https"
+    ).toString();
+    const host = (
+      req.headers["x-forwarded-host"] ||
+      req.headers.host ||
+      ""
+    ).toString();
     const base = host ? `${proto}://${host}` : "";
     const url = base || process.env.PUBLIC_BASE_URL || "";
 
@@ -16,7 +24,15 @@ export default async function handler(req: any, res: any) {
         default: {
           name: "TON",
           description: "TON blockchain",
-          servers: [{ name: "tonapi", url: (process.env.TON_API_BASE || "https://tonapi.io").replace(/\/$/, "") }],
+          servers: [
+            {
+              name: "tonapi",
+              url: (process.env.TON_API_BASE || "https://tonapi.io").replace(
+                /\/$/,
+                "",
+              ),
+            },
+          ],
         },
       },
     };
