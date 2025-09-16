@@ -3,7 +3,7 @@ import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
 import { createOffer, listOffers, tonChainInfo } from "./routes/offers";
-import { getUserByAddress, setNickname, upsertUser } from "./routes/users";
+import { getUserByAddress, upsertUser } from "./routes/users";
 
 import { PING_MESSAGE, TON_API_BASE } from "./config";
 import { resetDatabase } from "./routes/admin";
