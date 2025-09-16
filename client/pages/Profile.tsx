@@ -1,6 +1,4 @@
 import WalletGate from "@/components/WalletGate";
-
-import WalletGate from "@/components/WalletGate";
 import { useWalletAddress } from "@/hooks/useTon";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
