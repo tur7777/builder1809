@@ -14,7 +14,7 @@ type BotItem = {
 };
 
 const BOTS: BotItem[] = [
-  { name: "Make", path: "/make", color: "bg-violet-500" },
+  { name: "Make", path: "/offer/new", color: "bg-violet-500" },
   { name: "Take", path: "/take", color: "bg-amber-500" },
   { name: "Learn", path: "/learn", color: "bg-emerald-500" },
   { name: "Profile", path: "/profile", color: "bg-sky-500" },
@@ -26,15 +26,9 @@ function BotRow({ item }: { item: BotItem }) {
       to={item.path}
       className="flex items-center gap-3 rounded-xl px-3 py-2 hover:bg-white/5"
     >
-      <Avatar className="h-10 w-10">
-        {item.image ? (
-          <AvatarImage src={item.image} alt={item.name} />
-        ) : (
-          <AvatarFallback className={`${item.color} text-white`}>
-            {item.name.slice(0, 1).toUpperCase()}
-          </AvatarFallback>
-        )}
-      </Avatar>
+      <div className={`grid h-10 w-10 place-items-center rounded-full ${item.color} text-white`}>
+        {item.name.slice(0, 1).toUpperCase()}
+      </div>
       <div className="min-w-0 flex-1">
         <div className="text-sm font-medium text-white truncate">
           {item.name}
