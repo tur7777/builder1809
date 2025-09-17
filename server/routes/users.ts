@@ -3,7 +3,12 @@ import { prisma } from "../lib/prisma";
 
 // MVP: nickname is always equal to address. Remove manual nickname handling.
 export const upsertUser: RequestHandler = async (req, res) => {
-  const address = String(req.body?.address || "").trim();
+  let address = String(req.body?.address || "").trim();
+  try {
+    const { Address } = await import("@ton/core");
+    const parsed = Address.parse(address);
+    address = parsed.toString({ urlSafe: true, bounceable: true });
+  } catch {}
   if (!address) return res.status(400).json({ error: "address required" });
   try {
     const user = await prisma.user.upsert({
