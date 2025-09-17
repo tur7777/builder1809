@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 interface Offer {
   id: string;
@@ -94,9 +95,10 @@ export default function Take() {
           )}
 
           {offers.map((o) => (
-            <a
+            <Link
               key={o.id}
-              href={`/offer/${o.id}`}
+              to={`/offer/${o.id}`}
+              state={{ offer: o }}
               className="block rounded-xl border border-white/10 bg-white/5 p-4 hover:bg-white/10 transition-colors"
             >
               <div className="flex items-center justify-between">
@@ -106,7 +108,7 @@ export default function Take() {
               <div className="mt-1 text-xs text-white/60">
                 Status: {o.status} • {new Date(o.createdAt).toLocaleString()}
               </div>
-            </a>
+            </Link>
           ))}
         </div>
       </div>
