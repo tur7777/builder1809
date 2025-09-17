@@ -94,9 +94,10 @@ export default function Take() {
           )}
 
           {offers.map((o) => (
-            <div
+            <a
               key={o.id}
-              className="rounded-xl border border-white/10 bg-white/5 p-4"
+              href={`/offer/${o.id}`}
+              className="block rounded-xl border border-white/10 bg-white/5 p-4 hover:bg-white/10 transition-colors"
             >
               <div className="flex items-center justify-between">
                 <div className="text-base font-medium">{o.title}</div>
@@ -105,7 +106,7 @@ export default function Take() {
               <div className="mt-1 text-xs text-white/60">
                 Status: {o.status} • {new Date(o.createdAt).toLocaleString()}
               </div>
-            </div>
+            </a>
           ))}
         </div>
       </div>
