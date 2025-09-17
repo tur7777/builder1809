@@ -9,7 +9,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import { Analytics } from "@vercel/analytics/react";
 import NotFound from "./pages/NotFound";
-import Make from "./pages/Make";
 import Take from "./pages/Take";
 import Learn from "./pages/Learn";
 import Profile from "./pages/Profile";
