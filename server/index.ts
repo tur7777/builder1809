@@ -29,6 +29,7 @@ export function createServer() {
 
   // Offers API
   app.get("/api/offers", listOffers);
+  app.get("/api/offers/:id", require("./routes/offers").getOfferById);
   app.post("/api/offers", createOffer);
 
   // TON chain info proxy
