@@ -27,39 +27,10 @@ export default async function handler(req: any, res: any) {
     } catch {}
     if (!address) return res.status(400).json({ error: "address required" });
 
-    const EMOJIS = [
-      "😎",
-      "🚀",
-      "🎯",
-      "🔥",
-      "🦄",
-      "🧠",
-      "💎",
-      "🍀",
-      "⚡",
-      "🌈",
-      "🐼",
-      "🐳",
-      "🦊",
-      "🐸",
-      "🐯",
-      "��",
-      "🐵",
-      "🐱",
-      "🐶",
-      "🦁",
-    ];
-    const idx =
-      Math.abs(
-        Array.from(address).reduce((h, c) => (h << 5) - h + c.charCodeAt(0), 0),
-      ) % EMOJIS.length;
-    const emoji = EMOJIS[idx];
-    const avatarUrl = `/api/avatar/${encodeURIComponent(emoji)}`;
-
     const user = await prisma.user.upsert({
       where: { address },
-      update: { nickname: address, avatarUrl },
-      create: { address, nickname: address, avatarUrl },
+      update: { nickname: address },
+      create: { address, nickname: address },
     });
 
     return res.status(200).json({ ok: true, user });
