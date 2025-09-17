@@ -1,5 +1,6 @@
 import pkg from "@prisma/client";
 const { PrismaClient } = pkg;
+import { Address } from "@ton/core";
 const globalForPrisma = globalThis as unknown as {
   prisma?: InstanceType<typeof PrismaClient>;
 };
@@ -20,8 +21,10 @@ export default async function handler(req: any, res: any) {
         ? JSON.parse(req.body || "{}")
         : req.body || {};
     let address = String(body.address || "").trim();
-    // Basic guard: if address looks like raw wc:hex (e.g., 0:abcdef...), keep as-is; TonConnect usually provides base64url (UQ../EQ..)
-    // If later you share a raw example, we can implement precise conversion to base64url.
+    try {
+      const parsed = Address.parse(address);
+      address = parsed.toString({ urlSafe: true, bounceable: true });
+    } catch {}
     if (!address) return res.status(400).json({ error: "address required" });
 
     const EMOJIS = [
