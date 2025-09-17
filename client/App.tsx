@@ -14,6 +14,7 @@ import Take from "./pages/Take";
 import Learn from "./pages/Learn";
 import Profile from "./pages/Profile";
 import CreateOffer from "./pages/CreateOffer";
+import Offer from "./pages/Offer";
 import Header from "@/components/layout/Header";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
