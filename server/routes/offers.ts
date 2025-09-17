@@ -2,6 +2,21 @@ import type { RequestHandler } from "express";
 import { prisma } from "../lib/prisma";
 import { TON_API_BASE, TON_API_KEY } from "../config";
 
+export const getOfferById: RequestHandler = async (req, res) => {
+  const id = String(req.params.id || "").trim();
+  if (!id) return res.status(400).json({ error: "id required" });
+  try {
+    const offer = await prisma.offer.findUnique({
+      where: { id },
+      select: { id: true, title: true, description: true, budgetTON: true, status: true, createdAt: true },
+    });
+    if (!offer) return res.status(404).json({ error: "not found" });
+    res.json({ offer });
+  } catch (e: any) {
+    res.status(500).json({ error: e?.message || String(e) });
+  }
+};
+
 export const listOffers: RequestHandler = async (_req, res) => {
   try {
     const items = await prisma.offer.findMany({
