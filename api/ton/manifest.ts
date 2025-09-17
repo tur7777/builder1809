@@ -18,7 +18,7 @@ export default async function handler(req: any, res: any) {
       name: "FreelTON",
       iconUrl: `${url}/api/icon.png`,
       termsOfUseUrl: `${url}/terms`,
-      privacyPolicyUrl: `${url}/privacy`
+      privacyPolicyUrl: `${url}/privacy`,
     };
 
     res.setHeader("Content-Type", "application/json; charset=utf-8");

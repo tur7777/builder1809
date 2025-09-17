@@ -8,7 +8,14 @@ export const getOfferById: RequestHandler = async (req, res) => {
   try {
     const offer = await prisma.offer.findUnique({
       where: { id },
-      select: { id: true, title: true, description: true, budgetTON: true, status: true, createdAt: true },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        budgetTON: true,
+        status: true,
+        createdAt: true,
+      },
     });
     if (!offer) return res.status(404).json({ error: "not found" });
     res.json({ offer });
@@ -20,7 +27,14 @@ export const getOfferById: RequestHandler = async (req, res) => {
 export const listOffers: RequestHandler = async (_req, res) => {
   try {
     const items = await prisma.offer.findMany({
-      select: { id: true, title: true, description: true, budgetTON: true, status: true, createdAt: true },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        budgetTON: true,
+        status: true,
+        createdAt: true,
+      },
       orderBy: { createdAt: "desc" },
     });
     res.json({ items });
