@@ -14,8 +14,14 @@ export default async function handler(req: any, res: any) {
 
   try {
     if (req.method === "GET") {
-      const url = new URL(req.url || "http://localhost");
-      const q = String(url.searchParams.get("q") || "").trim();
+      let q = "";
+      try {
+        const base = `${req.headers?.["x-forwarded-proto"] || "https"}://${req.headers?.host || "localhost"}`;
+        const url = new URL(req.url || base, base);
+        q = String(url.searchParams.get("q") || "").trim();
+      } catch {
+        q = String((req.query && (req.query as any).q) || "").trim();
+      }
       const where = q
         ? {
             OR: [
