@@ -30,7 +30,6 @@ const App = () => (
         <Header>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/make" element={<Make />} />
             <Route path="/take" element={<Take />} />
             <Route path="/learn" element={<Learn />} />
             <Route path="/profile" element={<Profile />} />
