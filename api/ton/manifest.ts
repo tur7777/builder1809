@@ -14,27 +14,11 @@ export default async function handler(req: any, res: any) {
     const url = base || process.env.PUBLIC_BASE_URL || "";
 
     const manifest = {
-      manifestVersion: "1.1",
       url,
       name: "FreelTON",
       iconUrl: `${url}/api/icon.png`,
       termsOfUseUrl: `${url}/terms`,
-      privacyPolicyUrl: `${url}/privacy`,
-      ton: {
-        default: {
-          name: "TON",
-          description: "TON blockchain",
-          servers: [
-            {
-              name: "tonapi",
-              url: (process.env.TON_API_BASE || "https://tonapi.io").replace(
-                /\/$/,
-                "",
-              ),
-            },
-          ],
-        },
-      },
+      privacyPolicyUrl: `${url}/privacy`
     };
 
     res.setHeader("Content-Type", "application/json; charset=utf-8");
