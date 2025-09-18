@@ -3,10 +3,11 @@ import {
   TonConnectUIProvider,
   useTonWallet,
 } from "@tonconnect/ui-react";
-import { Link } from "react-router-dom";
-import { useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useMemo } from "react";
 import BottomNav from "./BottomNav";
 import { useTelegramPlatform } from "@/hooks/useTma";
+import { useTelegramBackButton } from "@/hooks/useTmaBackButton";
 
 function UpsertOnConnect() {
   const wallet = useTonWallet();
