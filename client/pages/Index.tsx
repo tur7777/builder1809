@@ -45,6 +45,7 @@ function BotRow({ item }: { item: BotItem }) {
 interface Offer {
   id: string;
   title: string;
+  description?: string;
   budgetTON: number;
   status: string;
   createdAt: string;
@@ -55,6 +56,7 @@ export default function Index() {
   const [offers, setOffers] = useState<Offer[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showDescId, setShowDescId] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
