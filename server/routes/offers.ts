@@ -24,9 +24,23 @@ export const getOfferById: RequestHandler = async (req, res) => {
   }
 };
 
-export const listOffers: RequestHandler = async (_req, res) => {
+export const listOffers: RequestHandler = async (req, res) => {
   try {
+    const qRaw = String((req.query?.q as string) || "").trim();
+    const tokens = qRaw ? qRaw.split(/\s+/).filter(Boolean) : [];
+    const where = tokens.length
+      ? {
+          AND: tokens.map((t) => ({
+            OR: [
+              { title: { contains: t, mode: "insensitive" as const } },
+              { description: { contains: t, mode: "insensitive" as const } },
+            ],
+          })),
+        }
+      : undefined;
+
     const items = await prisma.offer.findMany({
+      where,
       select: {
         id: true,
         title: true,
