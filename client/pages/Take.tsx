@@ -22,24 +22,38 @@ export default function Take() {
       setLoading(true);
       setError(null);
 
-      try {
-        const r = await fetch(`/api/offers${q ? `?q=${encodeURIComponent(q)}` : ""}`);
-        if (!mounted) return;
-        if (!r.ok) throw new Error(`Failed: ${r.status}`);
-        const json = await r.json();
-        setOffers(
-          (json.items || []).map((d: any) => ({
-            id: String(d.id ?? crypto.randomUUID()),
-            title: String(d.title ?? ""),
-            budgetTON: Number(d.budgetTON ?? 0),
-            status: String(d.status ?? "open"),
-            createdAt: String(d.createdAt ?? new Date().toISOString()),
-          })),
-        );
-        setLoading(false);
-      } catch (e: any) {
-        if (!mounted) return;
-        setError(String(e?.message || e));
+      const query = q ? `?q=${encodeURIComponent(q)}` : "";
+      const base = typeof window !== "undefined" ? window.location.origin : "";
+      const candidates = [
+        `/api/offers${query}`,
+        `${base}/api/offers${query}`,
+      ];
+
+      for (const url of candidates) {
+        try {
+          const r = await fetch(url);
+          if (!mounted) return;
+          if (!r.ok) continue;
+          const json = await r.json().catch(() => null);
+          if (!json) continue;
+          setOffers(
+            (json.items || []).map((d: any) => ({
+              id: String(d.id ?? crypto.randomUUID()),
+              title: String(d.title ?? ""),
+              budgetTON: Number(d.budgetTON ?? 0),
+              status: String(d.status ?? "open"),
+              createdAt: String(d.createdAt ?? new Date().toISOString()),
+            })),
+          );
+          setLoading(false);
+          return;
+        } catch (_) {
+          // try next candidate
+        }
+      }
+
+      if (mounted) {
+        setError("Network error while loading offers");
         setLoading(false);
       }
     }
