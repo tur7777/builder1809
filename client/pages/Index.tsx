@@ -70,6 +70,7 @@ export default function Index() {
           (json.items || []).map((d: any) => ({
             id: String(d.id),
             title: String(d.title ?? ""),
+            description: String(d.description ?? ""),
             budgetTON: Number(d.budgetTON ?? 0),
             status: String(d.status ?? "open"),
             createdAt: String(d.createdAt ?? new Date().toISOString()),
