@@ -167,7 +167,29 @@ export default function Index() {
             offers.map((o) => (
               <div
                 key={o.id}
-                onClick={() => setShowDescId((prev) => (prev === o.id ? null : o.id))}
+                onClick={() => {
+                  if (moved) return; // ignore click after swipe
+                  navigate(`/offer/${o.id}`, { state: { offer: o } });
+                }}
+                onTouchStart={(e) => {
+                  const t = e.touches[0];
+                  setTouchStart({ x: t.clientX, y: t.clientY, id: o.id });
+                  setMoved(false);
+                }}
+                onTouchMove={(e) => {
+                  if (!touchStart) return;
+                  const t = e.touches[0];
+                  const dx = t.clientX - touchStart.x;
+                  const dy = t.clientY - touchStart.y;
+                  if (Math.abs(dx) > 12 || Math.abs(dy) > 12) setMoved(true);
+                }}
+                onTouchEnd={() => {
+                  if (moved && touchStart?.id === o.id) {
+                    setShowDescId((prev) => (prev === o.id ? null : o.id));
+                  }
+                  setTouchStart(null);
+                  setMoved(false);
+                }}
                 className="cursor-pointer rounded-xl border border-white/10 bg-white/5 p-3 hover:bg-white/10 transition-colors"
               >
                 <div className="mb-2 overflow-hidden rounded-lg bg-white/10">
