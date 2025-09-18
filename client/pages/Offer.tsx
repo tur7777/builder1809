@@ -77,6 +77,11 @@ export default function OfferPage() {
             <div className="mt-1 text-xs text-white/60">
               Status: {minimal.status}
             </div>
+            {offer?.description && (
+              <div className="mt-3 whitespace-pre-wrap text-sm text-white/80">
+                {String(offer.description)}
+              </div>
+            )}
           </div>
         )}
       </div>
