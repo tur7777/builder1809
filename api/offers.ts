@@ -24,10 +24,15 @@ export default async function handler(req: any, res: any) {
       }
       const where = q
         ? {
-            OR: [
-              { title: { contains: q, mode: "insensitive" as const } },
-              { description: { contains: q, mode: "insensitive" as const } },
-            ],
+            AND: q
+              .split(/\s+/)
+              .filter(Boolean)
+              .map((t) => ({
+                OR: [
+                  { title: { contains: t, mode: "insensitive" as const } },
+                  { description: { contains: t, mode: "insensitive" as const } },
+                ],
+              })),
           }
         : undefined;
       const items = await prisma.offer.findMany({
