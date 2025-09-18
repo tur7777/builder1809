@@ -57,6 +57,9 @@ export default function Index() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showDescId, setShowDescId] = useState<string | null>(null);
+  const [touchStart, setTouchStart] = useState<{ x: number; y: number; id: string } | null>(null);
+  const [moved, setMoved] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     let mounted = true;
