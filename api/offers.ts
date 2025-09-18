@@ -15,24 +15,26 @@ export default async function handler(req: any, res: any) {
   try {
     if (req.method === "GET") {
       let q = "";
-      try {
-        const base = `${req.headers?.["x-forwarded-proto"] || "https"}://${req.headers?.host || "localhost"}`;
-        const url = new URL(req.url || base, base);
-        q = String(url.searchParams.get("q") || "").trim();
-      } catch {
-        q = String((req.query && (req.query as any).q) || "").trim();
+      // Prefer framework-provided query first
+      if (req?.query && typeof (req.query as any).q === "string") {
+        q = String((req.query as any).q || "").trim();
+      } else {
+        try {
+          const base = `${req.headers?.["x-forwarded-proto"] || "https"}://${req.headers?.host || "localhost"}`;
+          const raw = (req as any).originalUrl || req.url || base;
+          const url = new URL(raw, base);
+          q = String(url.searchParams.get("q") || "").trim();
+        } catch {}
       }
-      const where = q
+      const tokens = q ? q.split(/\s+/).filter(Boolean) : [];
+      const where = tokens.length
         ? {
-            AND: q
-              .split(/\s+/)
-              .filter(Boolean)
-              .map((t) => ({
-                OR: [
-                  { title: { contains: t, mode: "insensitive" as const } },
-                  { description: { contains: t, mode: "insensitive" as const } },
-                ],
-              })),
+            AND: tokens.map((t) => ({
+              OR: [
+                { title: { contains: t, mode: "insensitive" as const } },
+                { description: { contains: t, mode: "insensitive" as const } },
+              ],
+            })),
           }
         : undefined;
       const items = await prisma.offer.findMany({
