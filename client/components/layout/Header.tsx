@@ -51,6 +51,14 @@ export default function Header({ children }: { children?: React.ReactNode }) {
   const { isAndroid } = useTelegramPlatform();
   const topOffsetClass = isAndroid ? "mt-[69px] sm:mt-[60px]" : "mt-0";
 
+  const location = useLocation();
+  const navigate = useNavigate();
+  const showBack = useMemo(() => location.pathname !== "/", [location.pathname]);
+  useTelegramBackButton(showBack, () => {
+    if (typeof window !== "undefined" && window.history.length > 1) navigate(-1);
+    else navigate("/");
+  });
+
   return (
     <TonConnectUIProvider manifestUrl={manifestUrl}>
       <UpsertOnConnect />
