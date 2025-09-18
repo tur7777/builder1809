@@ -164,7 +164,8 @@ export default function Index() {
             offers.map((o) => (
               <div
                 key={o.id}
-                className="rounded-xl border border-white/10 bg-white/5 p-3"
+                onClick={() => setShowDescId((prev) => (prev === o.id ? null : o.id))}
+                className="cursor-pointer rounded-xl border border-white/10 bg-white/5 p-3 hover:bg-white/10 transition-colors"
               >
                 <div className="mb-2 overflow-hidden rounded-lg bg-white/10">
                   {o.imageUrl ? (
@@ -177,11 +178,26 @@ export default function Index() {
                     <div className="h-24 w-full bg-gradient-to-br from-white/10 to-white/5" />
                   )}
                 </div>
-                <div className="truncate text-sm font-medium">{o.title}</div>
-                <div className="mt-1 text-xs text-white/60">
-                  {o.budgetTON} TON •{" "}
-                  {new Date(o.createdAt).toLocaleDateString()}
-                </div>
+                {showDescId === o.id ? (
+                  <div
+                    className="text-sm text-white/80"
+                    style={{
+                      display: "-webkit-box",
+                      WebkitBoxOrient: "vertical" as any,
+                      WebkitLineClamp: 3 as any,
+                      overflow: "hidden",
+                    }}
+                  >
+                    {o.description || "No description"}
+                  </div>
+                ) : (
+                  <>
+                    <div className="truncate text-sm font-medium">{o.title}</div>
+                    <div className="mt-1 text-xs text-white/60">
+                      {o.budgetTON} TON • {new Date(o.createdAt).toLocaleDateString()}
+                    </div>
+                  </>
+                )}
               </div>
             ))}
 
