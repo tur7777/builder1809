@@ -59,13 +59,17 @@ export default function Index() {
   const [showDescId, setShowDescId] = useState<string | null>(null);
   const [touchStart, setTouchStart] = useState<{ x: number; y: number; id: string } | null>(null);
   const [moved, setMoved] = useState(false);
+  const [q, setQ] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
     let mounted = true;
-    (async () => {
+    const ctrl = new AbortController();
+    const t = setTimeout(async () => {
+      setLoading(true);
+      setError(null);
       try {
-        const r = await fetch("/api/offers");
+        const r = await fetch(`/api/offers${q ? `?q=${encodeURIComponent(q)}` : ""}` , { signal: ctrl.signal });
         if (!r.ok) throw new Error(`Failed: ${r.status}`);
         const json = await r.json();
         if (!mounted) return;
@@ -81,16 +85,18 @@ export default function Index() {
           })),
         );
       } catch (e: any) {
-        if (!mounted) return;
+        if (!mounted || e?.name === "AbortError") return;
         setError(String(e?.message || e));
       } finally {
         if (mounted) setLoading(false);
       }
-    })();
+    }, 250);
     return () => {
       mounted = false;
+      ctrl.abort();
+      clearTimeout(t);
     };
-  }, []);
+  }, [q]);
 
   return (
     <div className="min-h-screen bg-[hsl(217,33%,9%)] text-white">
