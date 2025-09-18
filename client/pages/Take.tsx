@@ -17,17 +17,13 @@ export default function Take() {
 
   useEffect(() => {
     let mounted = true;
-    const ctrl = new AbortController();
 
     async function loadOffers() {
       setLoading(true);
       setError(null);
 
       try {
-        const r = await fetch(
-          `/api/offers${q ? `?q=${encodeURIComponent(q)}` : ""}`,
-          { signal: ctrl.signal },
-        );
+        const r = await fetch(`/api/offers${q ? `?q=${encodeURIComponent(q)}` : ""}`);
         if (!mounted) return;
         if (!r.ok) throw new Error(`Failed: ${r.status}`);
         const json = await r.json();
@@ -42,7 +38,7 @@ export default function Take() {
         );
         setLoading(false);
       } catch (e: any) {
-        if (!mounted || e?.name === "AbortError") return;
+        if (!mounted) return;
         setError(String(e?.message || e));
         setLoading(false);
       }
@@ -52,7 +48,6 @@ export default function Take() {
 
     return () => {
       mounted = false;
-      ctrl.abort();
       clearTimeout(t);
     };
   }, [q]);
