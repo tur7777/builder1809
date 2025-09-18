@@ -53,9 +53,13 @@ export default function Header({ children }: { children?: React.ReactNode }) {
 
   const location = useLocation();
   const navigate = useNavigate();
-  const showBack = useMemo(() => location.pathname !== "/", [location.pathname]);
+  const showBack = useMemo(
+    () => location.pathname !== "/",
+    [location.pathname],
+  );
   useTelegramBackButton(showBack, () => {
-    if (typeof window !== "undefined" && window.history.length > 1) navigate(-1);
+    if (typeof window !== "undefined" && window.history.length > 1)
+      navigate(-1);
     else navigate("/");
   });
 

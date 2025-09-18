@@ -1,6 +1,8 @@
 import pkg from "@prisma/client";
 const { PrismaClient } = pkg;
-const globalForPrisma = globalThis as unknown as { prisma?: InstanceType<typeof PrismaClient> };
+const globalForPrisma = globalThis as unknown as {
+  prisma?: InstanceType<typeof PrismaClient>;
+};
 const prisma = globalForPrisma.prisma || new PrismaClient();
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
@@ -9,9 +11,12 @@ export default async function handler(req: any, res: any) {
   res.setHeader("Access-Control-Allow-Methods", "POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, x-admin-secret");
   if (req.method === "OPTIONS") return res.status(204).end();
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+  if (req.method !== "POST")
+    return res.status(405).json({ error: "Method not allowed" });
 
-  const provided = String(req.headers["x-admin-secret"] || req.query?.secret || "");
+  const provided = String(
+    req.headers["x-admin-secret"] || req.query?.secret || "",
+  );
   const ADMIN_SECRET = process.env.ADMIN_SECRET || "";
   if (!ADMIN_SECRET || provided !== ADMIN_SECRET) {
     return res.status(401).json({ error: "unauthorized" });

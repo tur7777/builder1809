@@ -24,10 +24,7 @@ export default function Take() {
 
       const query = q ? `?q=${encodeURIComponent(q)}` : "";
       const base = typeof window !== "undefined" ? window.location.origin : "";
-      const candidates = [
-        `/api/offers${query}`,
-        `${base}/api/offers${query}`,
-      ];
+      const candidates = [`/api/offers${query}`, `${base}/api/offers${query}`];
 
       for (const url of candidates) {
         try {

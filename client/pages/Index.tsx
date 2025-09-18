@@ -26,7 +26,9 @@ function BotRow({ item }: { item: BotItem }) {
       to={item.path}
       className="flex items-center gap-3 rounded-xl px-3 py-2 hover:bg-white/5"
     >
-      <div className={`grid h-10 w-10 place-items-center rounded-full ${item.color} text-white`}>
+      <div
+        className={`grid h-10 w-10 place-items-center rounded-full ${item.color} text-white`}
+      >
         {item.name.slice(0, 1).toUpperCase()}
       </div>
       <div className="min-w-0 flex-1">
@@ -57,7 +59,11 @@ export default function Index() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showDescId, setShowDescId] = useState<string | null>(null);
-  const [touchStart, setTouchStart] = useState<{ x: number; y: number; id: string } | null>(null);
+  const [touchStart, setTouchStart] = useState<{
+    x: number;
+    y: number;
+    id: string;
+  } | null>(null);
   const [moved, setMoved] = useState(false);
   const [q, setQ] = useState("");
   const navigate = useNavigate();
@@ -69,7 +75,10 @@ export default function Index() {
       setLoading(true);
       setError(null);
       try {
-        const r = await fetch(`/api/offers${q ? `?q=${encodeURIComponent(q)}` : ""}` , { signal: ctrl.signal });
+        const r = await fetch(
+          `/api/offers${q ? `?q=${encodeURIComponent(q)}` : ""}`,
+          { signal: ctrl.signal },
+        );
         if (!r.ok) throw new Error(`Failed: ${r.status}`);
         const json = await r.json();
         if (!mounted) return;
@@ -225,9 +234,12 @@ export default function Index() {
                   </div>
                 ) : (
                   <>
-                    <div className="truncate text-sm font-medium">{o.title}</div>
+                    <div className="truncate text-sm font-medium">
+                      {o.title}
+                    </div>
                     <div className="mt-1 text-xs text-white/60">
-                      {o.budgetTON} TON • {new Date(o.createdAt).toLocaleDateString()}
+                      {o.budgetTON} TON •{" "}
+                      {new Date(o.createdAt).toLocaleDateString()}
                     </div>
                   </>
                 )}
