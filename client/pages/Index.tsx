@@ -128,6 +128,8 @@ export default function Index() {
         <div className="mt-6 relative">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-white/40" />
           <Input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
             placeholder="Search"
             className="h-11 rounded-xl bg-white/5 pl-10 text-white placeholder:text-white/50 border-white/10 focus-visible:ring-primary"
           />
