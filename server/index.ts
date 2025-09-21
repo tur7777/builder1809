@@ -2,7 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
-import { createOffer, listOffers, tonChainInfo } from "./routes/offers";
+import { createOffer, listOffers, tonChainInfo, getOfferById } from "./routes/offers";
 import { getUserByAddress, upsertUser } from "./routes/users";
 
 import { PING_MESSAGE, TON_API_BASE } from "./config";
@@ -29,7 +29,7 @@ export function createServer() {
 
   // Offers API
   app.get("/api/offers", listOffers);
-  app.get("/api/offers/:id", require("./routes/offers").getOfferById);
+  app.get("/api/offers/:id", getOfferById);
   app.post("/api/offers", createOffer);
 
   // TON chain info proxy
