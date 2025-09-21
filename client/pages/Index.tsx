@@ -83,7 +83,8 @@ export default function Index() {
         if (stack) params.set("stack", stack);
         if (minBudget) params.set("minBudget", minBudget);
         if (maxBudget) params.set("maxBudget", maxBudget);
-        const r = await fetch(`/api/offers${params.size ? `?${params.toString()}` : ""}`,
+        const r = await fetch(
+          `/api/offers${params.size ? `?${params.toString()}` : ""}`,
           { signal: ctrl.signal },
         );
         if (!r.ok) throw new Error(`Failed: ${r.status}`);
@@ -262,7 +263,8 @@ export default function Index() {
                     </div>
                     <div className="flex items-center justify-between text-xs text-white/60">
                       <div>
-                        {o.budgetTON} TON • {new Date(o.createdAt).toLocaleDateString()}
+                        {o.budgetTON} TON •{" "}
+                        {new Date(o.createdAt).toLocaleDateString()}
                       </div>
                       <Button
                         variant="ghost"
@@ -283,7 +285,8 @@ export default function Index() {
                       {o.title}
                     </div>
                     <div className="mt-1 text-xs text-white/60">
-                      {o.budgetTON} TON • {new Date(o.createdAt).toLocaleDateString()}
+                      {o.budgetTON} TON •{" "}
+                      {new Date(o.createdAt).toLocaleDateString()}
                     </div>
                   </>
                 )}

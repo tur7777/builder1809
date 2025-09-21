@@ -35,7 +35,12 @@ export default function CreateOffer() {
       const r = await fetch("/api/offers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, description, budgetTON: Number(budget), stack }),
+        body: JSON.stringify({
+          title,
+          description,
+          budgetTON: Number(budget),
+          stack,
+        }),
       });
       if (!r.ok) throw new Error("Failed to create offer");
       navigate("/take");
@@ -68,7 +73,9 @@ export default function CreateOffer() {
               />
             </div>
             <div>
-              <label className="mb-2 block text-sm text-white/70">Description</label>
+              <label className="mb-2 block text-sm text-white/70">
+                Description
+              </label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -104,7 +111,9 @@ export default function CreateOffer() {
             >
               {loading ? "Creating..." : "Create Offer"}
             </Button>
-            <div className="text-xs text-white/50">All fields can be edited later.</div>
+            <div className="text-xs text-white/50">
+              All fields can be edited later.
+            </div>
           </div>
         </WalletGate>
       </div>

@@ -3,7 +3,9 @@ import { prisma } from "../lib/prisma";
 import { ADMIN_SECRET } from "../config";
 
 export const resetDatabase: RequestHandler = async (req, res) => {
-  const provided = String(req.headers["x-admin-secret"] || req.query.secret || "");
+  const provided = String(
+    req.headers["x-admin-secret"] || req.query.secret || "",
+  );
   if (!ADMIN_SECRET || provided !== ADMIN_SECRET) {
     return res.status(401).json({ error: "unauthorized" });
   }

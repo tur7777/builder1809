@@ -2,7 +2,12 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
-import { createOffer, listOffers, tonChainInfo, getOfferById } from "./routes/offers";
+import {
+  createOffer,
+  listOffers,
+  tonChainInfo,
+  getOfferById,
+} from "./routes/offers";
 import { getUserByAddress, upsertUser } from "./routes/users";
 
 import { PING_MESSAGE, TON_API_BASE, CORS_ORIGIN } from "./config";
@@ -12,7 +17,10 @@ export function createServer() {
   const app = express();
 
   // Middleware
-  const origins = (CORS_ORIGIN || "").split(",").map((s) => s.trim()).filter(Boolean);
+  const origins = (CORS_ORIGIN || "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
   const corsOptions = origins.length ? { origin: origins } : { origin: true };
   app.use(cors(corsOptions));
   app.use(express.json());
