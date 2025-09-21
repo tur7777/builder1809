@@ -5,14 +5,16 @@ import { handleDemo } from "./routes/demo";
 import { createOffer, listOffers, tonChainInfo, getOfferById } from "./routes/offers";
 import { getUserByAddress, upsertUser } from "./routes/users";
 
-import { PING_MESSAGE, TON_API_BASE } from "./config";
+import { PING_MESSAGE, TON_API_BASE, CORS_ORIGIN } from "./config";
 import { resetDatabase } from "./routes/admin";
 
 export function createServer() {
   const app = express();
 
   // Middleware
-  app.use(cors());
+  const origins = (CORS_ORIGIN || "").split(",").map((s) => s.trim()).filter(Boolean);
+  const corsOptions = origins.length ? { origin: origins } : { origin: true };
+  app.use(cors(corsOptions));
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
@@ -77,6 +79,12 @@ export function createServer() {
     } catch (e) {
       res.status(404).end();
     }
+  });
+
+  // Generic error handler (avoid leaking internals)
+  app.use((err: any, _req: any, res: any, _next: any) => {
+    console.error("Unhandled error:", err);
+    res.status(500).json({ error: "internal_error" });
   });
 
   return app;
