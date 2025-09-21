@@ -18,7 +18,8 @@ export const upsertUser: RequestHandler = async (req, res) => {
     });
     res.json({ ok: true, user });
   } catch (e: any) {
-    res.status(500).json({ error: e?.message || String(e) });
+    console.error("users route error:", e);
+    res.status(500).json({ error: "internal_error" });
   }
 };
 
@@ -32,6 +33,7 @@ export const getUserByAddress: RequestHandler = async (req, res) => {
     const normalized = { ...user, nickname: user.nickname || user.address };
     res.json({ ok: true, user: normalized });
   } catch (e: any) {
-    res.status(500).json({ error: e?.message || String(e) });
+    console.error("users route error:", e);
+    res.status(500).json({ error: "internal_error" });
   }
 };
