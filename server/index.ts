@@ -3,10 +3,9 @@ import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
 import { createOffer, listOffers, tonChainInfo } from "./routes/offers";
-import { upsertUser } from "./routes/users";
+import { getUserByAddress, upsertUser } from "./routes/users";
 
 import { PING_MESSAGE, TON_API_BASE } from "./config";
-import { getUserByAddress, setNickname, upsertUser } from "./routes/users";
 import { resetDatabase } from "./routes/admin";
 
 export function createServer() {
@@ -27,10 +26,10 @@ export function createServer() {
   // Users API
   app.post("/api/users/upsert", upsertUser);
   app.get("/api/users/:address", getUserByAddress);
-  app.post("/api/users/set-nickname", setNickname);
 
   // Offers API
   app.get("/api/offers", listOffers);
+  app.get("/api/offers/:id", require("./routes/offers").getOfferById);
   app.post("/api/offers", createOffer);
 
   // TON chain info proxy

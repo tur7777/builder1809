@@ -1,11 +1,13 @@
-import { PrismaClient } from "@prisma/client";
+import pkg from "@prisma/client";
 import { DATABASE_URL } from "../config";
 
-let prismaClient: PrismaClient;
+const { PrismaClient } = pkg;
+
+let prismaClient: InstanceType<typeof PrismaClient>;
 
 declare global {
   // eslint-disable-next-line no-var
-  var __prisma: PrismaClient | undefined;
+  var __prisma: InstanceType<typeof PrismaClient> | undefined;
 }
 
 if (process.env.NODE_ENV === "production") {
@@ -14,7 +16,7 @@ if (process.env.NODE_ENV === "production") {
   if (!global.__prisma) {
     global.__prisma = new PrismaClient();
   }
-  prismaClient = global.__prisma;
+  prismaClient = global.__prisma as InstanceType<typeof PrismaClient>;
 }
 
 export const prisma = prismaClient;

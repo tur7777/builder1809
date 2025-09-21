@@ -1,4 +1,11 @@
-import { prisma } from "../../server/lib/prisma";
+import pkg from "@prisma/client";
+const { PrismaClient } = pkg;
+import { Address } from "@ton/core";
+const globalForPrisma = globalThis as unknown as {
+  prisma?: InstanceType<typeof PrismaClient>;
+};
+const prisma = globalForPrisma.prisma || new PrismaClient();
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
 export default async function handler(req: any, res: any) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -13,13 +20,17 @@ export default async function handler(req: any, res: any) {
       typeof req.body === "string"
         ? JSON.parse(req.body || "{}")
         : req.body || {};
-    const address = String(body.address || "").trim();
+    let address = String(body.address || "").trim();
+    try {
+      const parsed = Address.parse(address);
+      address = parsed.toString({ urlSafe: true, bounceable: true });
+    } catch {}
     if (!address) return res.status(400).json({ error: "address required" });
 
     const user = await prisma.user.upsert({
       where: { address },
-      update: {},
-      create: { address },
+      update: { nickname: address },
+      create: { address, nickname: address },
     });
 
     return res.status(200).json({ ok: true, user });

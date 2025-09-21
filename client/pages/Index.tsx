@@ -1,9 +1,8 @@
 import { Bot, ChevronRight, Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 type BotItem = {
@@ -15,7 +14,7 @@ type BotItem = {
 };
 
 const BOTS: BotItem[] = [
-  { name: "Make", path: "/make", color: "bg-violet-500" },
+  { name: "Make", path: "/offer/new", color: "bg-violet-500" },
   { name: "Take", path: "/take", color: "bg-amber-500" },
   { name: "Learn", path: "/learn", color: "bg-emerald-500" },
   { name: "Profile", path: "/profile", color: "bg-sky-500" },
@@ -27,15 +26,11 @@ function BotRow({ item }: { item: BotItem }) {
       to={item.path}
       className="flex items-center gap-3 rounded-xl px-3 py-2 hover:bg-white/5"
     >
-      <Avatar className="h-10 w-10">
-        {item.image ? (
-          <AvatarImage src={item.image} alt={item.name} />
-        ) : (
-          <AvatarFallback className={`${item.color} text-white`}>
-            {item.name.slice(0, 1).toUpperCase()}
-          </AvatarFallback>
-        )}
-      </Avatar>
+      <div
+        className={`grid h-10 w-10 place-items-center rounded-full ${item.color} text-white`}
+      >
+        {item.name.slice(0, 1).toUpperCase()}
+      </div>
       <div className="min-w-0 flex-1">
         <div className="text-sm font-medium text-white truncate">
           {item.name}
@@ -52,6 +47,7 @@ function BotRow({ item }: { item: BotItem }) {
 interface Offer {
   id: string;
   title: string;
+  description?: string;
   budgetTON: number;
   status: string;
   createdAt: string;
@@ -62,12 +58,27 @@ export default function Index() {
   const [offers, setOffers] = useState<Offer[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showDescId, setShowDescId] = useState<string | null>(null);
+  const [touchStart, setTouchStart] = useState<{
+    x: number;
+    y: number;
+    id: string;
+  } | null>(null);
+  const [moved, setMoved] = useState(false);
+  const [q, setQ] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     let mounted = true;
-    (async () => {
+    const ctrl = new AbortController();
+    const t = setTimeout(async () => {
+      setLoading(true);
+      setError(null);
       try {
-        const r = await fetch("/api/offers");
+        const r = await fetch(
+          `/api/offers${q ? `?q=${encodeURIComponent(q)}` : ""}`,
+          { signal: ctrl.signal },
+        );
         if (!r.ok) throw new Error(`Failed: ${r.status}`);
         const json = await r.json();
         if (!mounted) return;
@@ -75,6 +86,7 @@ export default function Index() {
           (json.items || []).map((d: any) => ({
             id: String(d.id),
             title: String(d.title ?? ""),
+            description: String(d.description ?? ""),
             budgetTON: Number(d.budgetTON ?? 0),
             status: String(d.status ?? "open"),
             createdAt: String(d.createdAt ?? new Date().toISOString()),
@@ -82,16 +94,18 @@ export default function Index() {
           })),
         );
       } catch (e: any) {
-        if (!mounted) return;
+        if (!mounted || e?.name === "AbortError") return;
         setError(String(e?.message || e));
       } finally {
         if (mounted) setLoading(false);
       }
-    })();
+    }, 250);
     return () => {
       mounted = false;
+      ctrl.abort();
+      clearTimeout(t);
     };
-  }, []);
+  }, [q]);
 
   return (
     <div className="min-h-screen bg-[hsl(217,33%,9%)] text-white">
@@ -123,6 +137,8 @@ export default function Index() {
         <div className="mt-6 relative">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-white/40" />
           <Input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
             placeholder="Search"
             className="h-11 rounded-xl bg-white/5 pl-10 text-white placeholder:text-white/50 border-white/10 focus-visible:ring-primary"
           />
@@ -168,7 +184,30 @@ export default function Index() {
             offers.map((o) => (
               <div
                 key={o.id}
-                className="rounded-xl border border-white/10 bg-white/5 p-3"
+                onClick={() => {
+                  if (moved) return; // ignore click after swipe
+                  navigate(`/offer/${o.id}`, { state: { offer: o } });
+                }}
+                onTouchStart={(e) => {
+                  const t = e.touches[0];
+                  setTouchStart({ x: t.clientX, y: t.clientY, id: o.id });
+                  setMoved(false);
+                }}
+                onTouchMove={(e) => {
+                  if (!touchStart) return;
+                  const t = e.touches[0];
+                  const dx = t.clientX - touchStart.x;
+                  const dy = t.clientY - touchStart.y;
+                  if (Math.abs(dx) > 12 || Math.abs(dy) > 12) setMoved(true);
+                }}
+                onTouchEnd={() => {
+                  if (moved && touchStart?.id === o.id) {
+                    setShowDescId((prev) => (prev === o.id ? null : o.id));
+                  }
+                  setTouchStart(null);
+                  setMoved(false);
+                }}
+                className="cursor-pointer rounded-xl border border-white/10 bg-white/5 p-3 hover:bg-white/10 transition-colors"
               >
                 <div className="mb-2 overflow-hidden rounded-lg bg-white/10">
                   {o.imageUrl ? (
@@ -181,11 +220,29 @@ export default function Index() {
                     <div className="h-24 w-full bg-gradient-to-br from-white/10 to-white/5" />
                   )}
                 </div>
-                <div className="truncate text-sm font-medium">{o.title}</div>
-                <div className="mt-1 text-xs text-white/60">
-                  {o.budgetTON} TON •{" "}
-                  {new Date(o.createdAt).toLocaleDateString()}
-                </div>
+                {showDescId === o.id ? (
+                  <div
+                    className="text-sm text-white/80"
+                    style={{
+                      display: "-webkit-box",
+                      WebkitBoxOrient: "vertical" as any,
+                      WebkitLineClamp: 3 as any,
+                      overflow: "hidden",
+                    }}
+                  >
+                    {o.description || "No description"}
+                  </div>
+                ) : (
+                  <>
+                    <div className="truncate text-sm font-medium">
+                      {o.title}
+                    </div>
+                    <div className="mt-1 text-xs text-white/60">
+                      {o.budgetTON} TON •{" "}
+                      {new Date(o.createdAt).toLocaleDateString()}
+                    </div>
+                  </>
+                )}
               </div>
             ))}
 

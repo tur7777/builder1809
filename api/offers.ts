@@ -1,4 +1,10 @@
-import { prisma } from "../server/lib/prisma";
+import pkg from "@prisma/client";
+const { PrismaClient } = pkg;
+const globalForPrisma = globalThis as unknown as {
+  prisma?: InstanceType<typeof PrismaClient>;
+};
+const prisma = globalForPrisma.prisma || new PrismaClient();
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
 export default async function handler(req: any, res: any) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -8,8 +14,39 @@ export default async function handler(req: any, res: any) {
 
   try {
     if (req.method === "GET") {
+      let q = "";
+      // Prefer framework-provided query first
+      if (req?.query && typeof (req.query as any).q === "string") {
+        q = String((req.query as any).q || "").trim();
+      } else {
+        try {
+          const base = `${req.headers?.["x-forwarded-proto"] || "https"}://${req.headers?.host || "localhost"}`;
+          const raw = (req as any).originalUrl || req.url || base;
+          const url = new URL(raw, base);
+          q = String(url.searchParams.get("q") || "").trim();
+        } catch {}
+      }
+      const tokens = q ? q.split(/\s+/).filter(Boolean) : [];
+      const where = tokens.length
+        ? {
+            AND: tokens.map((t) => ({
+              OR: [
+                { title: { contains: t, mode: "insensitive" as const } },
+                { description: { contains: t, mode: "insensitive" as const } },
+              ],
+            })),
+          }
+        : undefined;
       const items = await prisma.offer.findMany({
-        select: { id: true, title: true, description: true, budgetTON: true, status: true, createdAt: true },
+        where,
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          budgetTON: true,
+          status: true,
+          createdAt: true,
+        },
         orderBy: { createdAt: "desc" },
       });
       return res.status(200).json({ items });

@@ -11,20 +11,25 @@
     ]
   },
   "scripts": {
+    "predev": "prisma generate",
     "dev": "vite",
     "build": "npm run build:client && npm run build:server",
     "build:client": "vite build",
     "build:server": "vite build --config vite.config.server.ts",
+    "prestart": "npm run build",
     "start": "node dist/server/node-build.mjs",
     "test": "vitest --run",
     "format.fix": "prettier --write .",
     "typecheck": "tsc",
     "prisma:generate": "prisma generate",
-    "prisma:deploy": "prisma migrate deploy"
+    "prisma:deploy": "prisma migrate deploy",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^5.16.2",
+    "@ton/core": "^0.61.0",
     "@tonconnect/ui-react": "^2.2.0",
+    "@vercel/analytics": "^1.5.0",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "postgres": "^3.4.7",
