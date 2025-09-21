@@ -10,6 +10,7 @@ export default function CreateOffer() {
   const [budget, setBudget] = useState("0.1");
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
+  const [stack, setStack] = useState("");
   const navigate = useNavigate();
   const connected = useIsWalletConnected();
   const address = useWalletAddress();
@@ -34,7 +35,7 @@ export default function CreateOffer() {
       const r = await fetch("/api/offers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, description, budgetTON: Number(budget) }),
+        body: JSON.stringify({ title, description, budgetTON: Number(budget), stack }),
       });
       if (!r.ok) throw new Error("Failed to create offer");
       navigate("/take");
@@ -73,6 +74,15 @@ export default function CreateOffer() {
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Describe the scope, deliverables, and milestones"
                 className="min-h-28 w-full rounded-md bg-white/5 text-white border border-white/10 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/40"
+              />
+            </div>
+            <div>
+              <label className="mb-2 block text-sm text-white/70">Stack</label>
+              <Input
+                value={stack}
+                onChange={(e) => setStack(e.target.value)}
+                placeholder="e.g. React, Node.js, TON"
+                className="bg-white/5 text-white border-white/10"
               />
             </div>
             <div>

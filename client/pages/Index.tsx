@@ -66,6 +66,9 @@ export default function Index() {
   } | null>(null);
   const [moved, setMoved] = useState(false);
   const [q, setQ] = useState("");
+  const [stack, setStack] = useState("");
+  const [minBudget, setMinBudget] = useState<string>("");
+  const [maxBudget, setMaxBudget] = useState<string>("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -75,8 +78,12 @@ export default function Index() {
       setLoading(true);
       setError(null);
       try {
-        const r = await fetch(
-          `/api/offers${q ? `?q=${encodeURIComponent(q)}` : ""}`,
+        const params = new URLSearchParams();
+        if (q) params.set("q", q);
+        if (stack) params.set("stack", stack);
+        if (minBudget) params.set("minBudget", minBudget);
+        if (maxBudget) params.set("maxBudget", maxBudget);
+        const r = await fetch(`/api/offers${params.size ? `?${params.toString()}` : ""}`,
           { signal: ctrl.signal },
         );
         if (!r.ok) throw new Error(`Failed: ${r.status}`);
@@ -105,7 +112,7 @@ export default function Index() {
       ctrl.abort();
       clearTimeout(t);
     };
-  }, [q]);
+  }, [q, stack, minBudget, maxBudget]);
 
   return (
     <div className="min-h-screen bg-[hsl(217,33%,9%)] text-white">
@@ -142,6 +149,33 @@ export default function Index() {
             placeholder="Search"
             className="h-11 rounded-xl bg-white/5 pl-10 text-white placeholder:text-white/50 border-white/10 focus-visible:ring-primary"
           />
+        </div>
+
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          <Input
+            value={stack}
+            onChange={(e) => setStack(e.target.value)}
+            placeholder="Stack (e.g. React, TON)"
+            className="h-10 rounded-lg bg-white/5 text-white placeholder:text-white/50 border-white/10"
+          />
+          <div className="flex gap-2">
+            <Input
+              type="number"
+              inputMode="decimal"
+              value={minBudget}
+              onChange={(e) => setMinBudget(e.target.value)}
+              placeholder="Min TON"
+              className="h-10 rounded-lg bg-white/5 text-white placeholder:text-white/50 border-white/10"
+            />
+            <Input
+              type="number"
+              inputMode="decimal"
+              value={maxBudget}
+              onChange={(e) => setMaxBudget(e.target.value)}
+              placeholder="Max TON"
+              className="h-10 rounded-lg bg-white/5 text-white placeholder:text-white/50 border-white/10"
+            />
+          </div>
         </div>
 
         <h2 className="mt-6 text-xs font-semibold uppercase tracking-wider text-white/60">
@@ -186,7 +220,7 @@ export default function Index() {
                 key={o.id}
                 onClick={() => {
                   if (moved) return; // ignore click after swipe
-                  navigate(`/offer/${o.id}`, { state: { offer: o } });
+                  setShowDescId((prev) => (prev === o.id ? null : o.id));
                 }}
                 onTouchStart={(e) => {
                   const t = e.touches[0];
@@ -221,16 +255,27 @@ export default function Index() {
                   )}
                 </div>
                 {showDescId === o.id ? (
-                  <div
-                    className="text-sm text-white/80"
-                    style={{
-                      display: "-webkit-box",
-                      WebkitBoxOrient: "vertical" as any,
-                      WebkitLineClamp: 3 as any,
-                      overflow: "hidden",
-                    }}
-                  >
-                    {o.description || "No description"}
+                  <div className="space-y-2">
+                    <div className="text-sm font-medium">{o.title}</div>
+                    <div className="text-sm text-white/80 whitespace-pre-wrap">
+                      {o.description || "No description"}
+                    </div>
+                    <div className="flex items-center justify-between text-xs text-white/60">
+                      <div>
+                        {o.budgetTON} TON • {new Date(o.createdAt).toLocaleDateString()}
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 px-2 text-primary"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/offer/${o.id}`, { state: { offer: o } });
+                        }}
+                      >
+                        Details
+                      </Button>
+                    </div>
                   </div>
                 ) : (
                   <>
@@ -238,8 +283,7 @@ export default function Index() {
                       {o.title}
                     </div>
                     <div className="mt-1 text-xs text-white/60">
-                      {o.budgetTON} TON •{" "}
-                      {new Date(o.createdAt).toLocaleDateString()}
+                      {o.budgetTON} TON • {new Date(o.createdAt).toLocaleDateString()}
                     </div>
                   </>
                 )}

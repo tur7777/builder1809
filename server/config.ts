@@ -4,6 +4,7 @@ export const TON_API_KEY = process.env.TON_API_KEY || "";
 export const PING_MESSAGE = process.env.PING_MESSAGE ?? "ping";
 export const PORT = Number(process.env.PORT || 3000);
 export const ADMIN_SECRET = process.env.ADMIN_SECRET || "";
+export const CORS_ORIGIN = process.env.CORS_ORIGIN || ""; // CSV or single origin. Empty => allow all in dev
 
 export default {
   DATABASE_URL,
@@ -12,4 +13,5 @@ export default {
   PING_MESSAGE,
   PORT,
   ADMIN_SECRET,
+  CORS_ORIGIN,
 };

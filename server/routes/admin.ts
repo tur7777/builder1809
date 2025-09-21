@@ -16,6 +16,7 @@ export const resetDatabase: RequestHandler = async (req, res) => {
     ]);
     res.json({ ok: true });
   } catch (e: any) {
-    res.status(500).json({ error: e?.message || String(e) });
+    console.error("resetDatabase error:", e);
+    res.status(500).json({ error: "internal_error" });
   }
 };
