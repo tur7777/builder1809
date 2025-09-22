@@ -2,8 +2,8 @@ import os
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
 from telegram.ext import Application, CommandHandler, ContextTypes
 
-BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
-APP_BASE_URL = os.environ.get("APP_BASE_URL", "")
+BOT_TOKEN = os.environ.get("8283212464:AAFMiygjsGhahRhvrcjQYgP9RpuLmHEZs5k", "")
+APP_BASE_URL = os.environ.get("https://builder1809-nine.vercel.app/", "")
 
 WELCOME = (
     "Welcome to FreeTON Freelance Exchange! 🎉\n"
