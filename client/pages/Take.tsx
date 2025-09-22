@@ -19,7 +19,11 @@ export default function Take() {
   const [error, setError] = useState<string | null>(null);
   const [q, setQ] = useState("");
   const [showDescId, setShowDescId] = useState<string | null>(null);
-  const [touchStart, setTouchStart] = useState<{ x: number; y: number; id: string } | null>(null);
+  const [touchStart, setTouchStart] = useState<{
+    x: number;
+    y: number;
+    id: string;
+  } | null>(null);
   const [moved, setMoved] = useState(false);
   const navigate = useNavigate();
 
@@ -94,7 +98,10 @@ export default function Take() {
         <div className="mt-4 grid grid-cols-2 gap-3 sm:gap-4">
           {loading &&
             Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="rounded-xl border border-white/10 bg-white/5 p-3">
+              <div
+                key={i}
+                className="rounded-xl border border-white/10 bg-white/5 p-3"
+              >
                 <div className="mb-2 h-24 w-full rounded-lg bg-white/10" />
                 <div className="h-4 w-3/4 rounded bg-white/10" />
               </div>
@@ -139,7 +146,11 @@ export default function Take() {
             >
               <div className="mb-2 overflow-hidden rounded-lg bg-white/10">
                 {o.imageUrl ? (
-                  <img src={o.imageUrl} alt={o.title} className="h-24 w-full object-cover" />
+                  <img
+                    src={o.imageUrl}
+                    alt={o.title}
+                    className="h-24 w-full object-cover"
+                  />
                 ) : (
                   <div className="h-24 w-full bg-gradient-to-br from-white/10 to-white/5" />
                 )}
@@ -152,7 +163,8 @@ export default function Take() {
                   </div>
                   <div className="flex items-center justify-between text-xs text-white/60">
                     <div>
-                      {o.budgetTON} TON • {new Date(o.createdAt).toLocaleDateString()}
+                      {o.budgetTON} TON •{" "}
+                      {new Date(o.createdAt).toLocaleDateString()}
                     </div>
                     <Button
                       variant="ghost"
@@ -171,7 +183,8 @@ export default function Take() {
                 <>
                   <div className="truncate text-sm font-medium">{o.title}</div>
                   <div className="mt-1 text-xs text-white/60">
-                    {o.budgetTON} TON • {new Date(o.createdAt).toLocaleDateString()}
+                    {o.budgetTON} TON •{" "}
+                    {new Date(o.createdAt).toLocaleDateString()}
                   </div>
                 </>
               )}
