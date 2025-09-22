@@ -5,6 +5,8 @@ export const PING_MESSAGE = process.env.PING_MESSAGE ?? "ping";
 export const PORT = Number(process.env.PORT || 3000);
 export const ADMIN_SECRET = process.env.ADMIN_SECRET || "";
 export const CORS_ORIGIN = process.env.CORS_ORIGIN || ""; // CSV or single origin. Empty => allow all in dev
+export const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || "";
+export const APP_BASE_URL = process.env.APP_BASE_URL || "";
 
 export default {
   DATABASE_URL,
@@ -14,4 +16,6 @@ export default {
   PORT,
   ADMIN_SECRET,
   CORS_ORIGIN,
+  TELEGRAM_BOT_TOKEN,
+  APP_BASE_URL,
 };
