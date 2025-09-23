@@ -7,6 +7,7 @@ export default function OfferPage() {
   const location = useLocation();
   const seed = (location.state as any)?.offer;
   const [offer, setOffer] = useState<any>(seed || null);
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(!seed);
   const [error, setError] = useState<string | null>(null);
 
