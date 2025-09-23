@@ -43,6 +43,14 @@ export default async function handler(req: any, res: any) {
       }
       const makerDeposit = +(price * (1 + N_PERCENT / 100)).toFixed(9);
       const takerStake = +(price * 0.2).toFixed(9);
+      // If creating a pre-chat thread for an offer, reuse existing 'created' order without taker
+      if (offerId) {
+        const existing = await prisma.order.findFirst({
+          where: { offerId, status: "created" },
+          orderBy: { createdAt: "desc" },
+        });
+        if (existing) return ok(res, existing, 200);
+      }
       const created = await prisma.order.create({
         data: {
           title,
