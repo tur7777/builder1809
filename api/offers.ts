@@ -62,12 +62,17 @@ export default async function handler(req: any, res: any) {
         typeof req.body === "string"
           ? JSON.parse(req.body || "{}")
           : req.body || {};
-      const { title, description = "", budgetTON } = body;
+      const { title, description = "", budgetTON, makerAddress = "" } = body;
       if (!title || typeof budgetTON !== "number" || budgetTON < 0) {
         return res.status(400).json({ error: "Invalid payload" });
       }
+      let creatorId: string | undefined;
+      if (makerAddress) {
+        const user = await prisma.user.findUnique({ where: { address: makerAddress } });
+        if (user) creatorId = user.id;
+      }
       const created = await prisma.offer.create({
-        data: { title, description, budgetTON, status: "open" },
+        data: { title, description, budgetTON, status: "open", ...(creatorId ? { creatorId } : {}) },
       });
       return res.status(201).json(created);
     }
