@@ -67,6 +67,7 @@ model Offer {
   creatorId  String?
   creator    User?        @relation(fields: [creatorId], references: [id])
   reviews    Review[]     @relation("OfferReviews")
+  orders     Order[]
 
   @@index([createdAt])
 }
