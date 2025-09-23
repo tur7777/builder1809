@@ -46,10 +46,15 @@ export default async function handler(req: any, res: any) {
           budgetTON: true,
           status: true,
           createdAt: true,
+          creator: { select: { address: true } },
         },
         orderBy: { createdAt: "desc" },
       });
-      return res.status(200).json({ items });
+      const mapped = items.map((o) => ({
+        ...o,
+        makerAddress: o.creator?.address || null,
+      }));
+      return res.status(200).json({ items: mapped });
     }
 
     if (req.method === "POST") {
