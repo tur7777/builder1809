@@ -1,12 +1,13 @@
+import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "./_prisma";
 
-function allow(res: any) {
+function allow(res: NextApiResponse) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
 
-export default async function handler(req: any, res: any) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   allow(res);
   if (req.method === "OPTIONS") return res.status(204).end();
 

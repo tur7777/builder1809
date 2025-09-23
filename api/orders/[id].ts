@@ -1,13 +1,14 @@
+import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../_prisma";
 import { ADMIN_WHITELIST } from "../_config";
 
-function allowCORS(res: any) {
+function allowCORS(res: NextApiResponse) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET,PATCH,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
 
-export default async function handler(req: any, res: any) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   allowCORS(res);
   if (req.method === "OPTIONS") return res.status(204).end();
 

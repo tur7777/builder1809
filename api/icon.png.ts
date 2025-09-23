@@ -1,4 +1,6 @@
-export default async function handler(_req: any, res: any) {
+import type { NextApiRequest, NextApiResponse } from "next";
+
+export default async function handler(_req: NextApiRequest, res: NextApiResponse) {
   try {
     const r = await fetch("https://via.placeholder.com/180.png");
     const buf = Buffer.from(await r.arrayBuffer());

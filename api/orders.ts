@@ -2,12 +2,12 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "./_prisma";
 import { N_PERCENT } from "./_config";
 
-function ok(res: any, data: any, code = 200) {
+function ok(res: NextApiResponse, data: any, code = 200) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   return res.status(code).json(data);
 }
 
-export default async function handler(req: any, res: any) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
