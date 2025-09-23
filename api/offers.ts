@@ -68,11 +68,19 @@ export default async function handler(req: any, res: any) {
       }
       let creatorId: string | undefined;
       if (makerAddress) {
-        const user = await prisma.user.findUnique({ where: { address: makerAddress } });
+        const user = await prisma.user.findUnique({
+          where: { address: makerAddress },
+        });
         if (user) creatorId = user.id;
       }
       const created = await prisma.offer.create({
-        data: { title, description, budgetTON, status: "open", ...(creatorId ? { creatorId } : {}) },
+        data: {
+          title,
+          description,
+          budgetTON,
+          status: "open",
+          ...(creatorId ? { creatorId } : {}),
+        },
       });
       return res.status(201).json(created);
     }

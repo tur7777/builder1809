@@ -15,13 +15,21 @@ export default async function handler(req: any, res: any) {
 
   if (req.method === "GET") {
     try {
-      const { address = "", role = "any", status = "" } = (req.query || {}) as any;
+      const {
+        address = "",
+        role = "any",
+        status = "",
+      } = (req.query || {}) as any;
       const where: any = {};
       if (status) where.status = status;
       if (address) {
         if (role === "maker") where.makerAddress = String(address);
         else if (role === "taker") where.takerAddress = String(address);
-        else where.OR = [{ makerAddress: String(address) }, { takerAddress: String(address) }];
+        else
+          where.OR = [
+            { makerAddress: String(address) },
+            { takerAddress: String(address) },
+          ];
       }
       const items = await prisma.order.findMany({
         where,
@@ -35,7 +43,10 @@ export default async function handler(req: any, res: any) {
 
   if (req.method === "POST") {
     try {
-      const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
+      const body =
+        typeof req.body === "string"
+          ? JSON.parse(req.body || "{}")
+          : req.body || {};
       const { title = "", makerAddress = "", priceTON, offerId = null } = body;
       const price = Number(priceTON);
       if (!title || !makerAddress || !Number.isFinite(price) || price <= 0) {

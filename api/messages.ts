@@ -26,10 +26,16 @@ export default async function handler(req: any, res: any) {
 
   if (req.method === "POST") {
     try {
-      const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
+      const body =
+        typeof req.body === "string"
+          ? JSON.parse(req.body || "{}")
+          : req.body || {};
       const { orderId = "", sender = "", text = "" } = body;
-      if (!orderId || !sender || !text) return res.status(400).json({ error: "invalid_payload" });
-      const created = await prisma.message.create({ data: { orderId, sender, text } });
+      if (!orderId || !sender || !text)
+        return res.status(400).json({ error: "invalid_payload" });
+      const created = await prisma.message.create({
+        data: { orderId, sender, text },
+      });
       return res.status(201).json(created);
     } catch (e) {
       return res.status(500).json({ error: "internal_error" });

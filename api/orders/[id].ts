@@ -26,7 +26,10 @@ export default async function handler(req: any, res: any) {
 
   if (req.method === "PATCH") {
     try {
-      const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
+      const body =
+        typeof req.body === "string"
+          ? JSON.parse(req.body || "{}")
+          : req.body || {};
       const action = String(body.action || "");
       const actor = String(body.actor || "");
 
@@ -35,8 +38,10 @@ export default async function handler(req: any, res: any) {
 
       if (action === "take") {
         const takerAddress = String(body.takerAddress || "");
-        if (!takerAddress) return res.status(400).json({ error: "taker_required" });
-        if (order.status !== "created") return res.status(409).json({ error: "bad_state" });
+        if (!takerAddress)
+          return res.status(400).json({ error: "taker_required" });
+        if (order.status !== "created")
+          return res.status(409).json({ error: "bad_state" });
         const updated = await prisma.order.update({
           where: { id },
           data: { status: "in_progress", takerAddress },
@@ -51,8 +56,15 @@ export default async function handler(req: any, res: any) {
         else if (actor === "taker") data.takerConfirmed = true;
         else return res.status(400).json({ error: "bad_actor" });
         let updated = await prisma.order.update({ where: { id }, data });
-        if (updated.makerConfirmed && updated.takerConfirmed && updated.status !== "completed") {
-          updated = await prisma.order.update({ where: { id }, data: { status: "completed", completedAt: new Date() } });
+        if (
+          updated.makerConfirmed &&
+          updated.takerConfirmed &&
+          updated.status !== "completed"
+        ) {
+          updated = await prisma.order.update({
+            where: { id },
+            data: { status: "completed", completedAt: new Date() },
+          });
         }
         return res.status(200).json({ order: updated });
       }
@@ -60,11 +72,15 @@ export default async function handler(req: any, res: any) {
       if (action === "cancel") {
         const by = String(body.by || "");
         const isAdmin = ADMIN_WHITELIST.includes(by);
-        if (order.status === "completed") return res.status(409).json({ error: "already_completed" });
+        if (order.status === "completed")
+          return res.status(409).json({ error: "already_completed" });
         if (!isAdmin && order.status === "in_progress") {
           return res.status(403).json({ error: "forbidden" });
         }
-        const updated = await prisma.order.update({ where: { id }, data: { status: "cancelled", cancelledAt: new Date() } });
+        const updated = await prisma.order.update({
+          where: { id },
+          data: { status: "cancelled", cancelledAt: new Date() },
+        });
         return res.status(200).json({ order: updated });
       }
 

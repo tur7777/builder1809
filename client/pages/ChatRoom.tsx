@@ -4,7 +4,12 @@ import { useWalletAddress } from "@/hooks/useTon";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-interface Message { id: string; sender: string; text: string; createdAt: string }
+interface Message {
+  id: string;
+  sender: string;
+  text: string;
+  createdAt: string;
+}
 
 export default function ChatRoom() {
   const { id } = useParams<{ id: string }>();
@@ -20,12 +25,20 @@ export default function ChatRoom() {
     try {
       const r = await fetch(`/api/messages?orderId=${encodeURIComponent(id)}`);
       const j = await r.json();
-      setMessages((j.items || []).map((m: any) => ({
-        id: String(m.id), sender: String(m.sender), text: String(m.text), createdAt: String(m.createdAt)
-      })));
+      setMessages(
+        (j.items || []).map((m: any) => ({
+          id: String(m.id),
+          sender: String(m.sender),
+          text: String(m.text),
+          createdAt: String(m.createdAt),
+        })),
+      );
     } finally {
       setLoading(false);
-      setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
+      setTimeout(
+        () => bottomRef.current?.scrollIntoView({ behavior: "smooth" }),
+        50,
+      );
     }
   }
 
@@ -40,7 +53,11 @@ export default function ChatRoom() {
     if (!id || !me || !text.trim()) return;
     const payload = { orderId: id, sender: me, text };
     setText("");
-    await fetch(`/api/messages`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+    await fetch(`/api/messages`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
     await load();
   }
 
@@ -58,7 +75,9 @@ export default function ChatRoom() {
             return (
               <div key={m.id} className={mine ? "text-right" : "text-left"}>
                 <div className="inline-block max-w-[85%] rounded-lg bg-white/10 px-3 py-2 text-sm">
-                  <div className="opacity-70 text-[11px]">{mine ? "You" : m.sender.slice(0, 6) + "…"}</div>
+                  <div className="opacity-70 text-[11px]">
+                    {mine ? "You" : m.sender.slice(0, 6) + "…"}
+                  </div>
                   <div className="whitespace-pre-wrap">{m.text}</div>
                 </div>
               </div>
@@ -67,8 +86,15 @@ export default function ChatRoom() {
           <div ref={bottomRef} />
         </div>
         <div className="mt-3 flex gap-2">
-          <Input value={text} onChange={(e) => setText(e.target.value)} placeholder="Write a message…" className="bg-white/5 text-white border-white/10" />
-          <Button onClick={send} className="bg-primary text-primary-foreground">Send</Button>
+          <Input
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="Write a message…"
+            className="bg-white/5 text-white border-white/10"
+          />
+          <Button onClick={send} className="bg-primary text-primary-foreground">
+            Send
+          </Button>
         </div>
       </div>
     </div>

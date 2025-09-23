@@ -43,7 +43,9 @@ export default function Chat() {
   }, [addr]);
 
   const sections = useMemo(() => {
-    const inProgress = items.filter((i) => i.status === "in_progress" || i.status === "created");
+    const inProgress = items.filter(
+      (i) => i.status === "in_progress" || i.status === "created",
+    );
     const completed = items.filter((i) => i.status === "completed");
     return { inProgress, completed };
   }, [items]);
@@ -52,16 +54,24 @@ export default function Chat() {
     <div className="min-h-screen bg-[hsl(217,33%,9%)] text-white">
       <div className="mx-auto w-full max-w-2xl px-4 py-10">
         <h1 className="text-3xl font-bold">Chat</h1>
-        {!addr && <div className="mt-3 text-white/70">Connect wallet to see your threads.</div>}
+        {!addr && (
+          <div className="mt-3 text-white/70">
+            Connect wallet to see your threads.
+          </div>
+        )}
 
         {loading && <div className="mt-4 text-white/70">Loading…</div>}
 
         {!loading && (
           <>
-            <h2 className="mt-6 text-sm font-semibold text-white/60">In Progress</h2>
+            <h2 className="mt-6 text-sm font-semibold text-white/60">
+              In Progress
+            </h2>
             <div className="mt-2 space-y-2">
               {sections.inProgress.length === 0 && (
-                <div className="rounded-lg border border-white/10 bg-white/5 p-3 text-white/70">No active threads.</div>
+                <div className="rounded-lg border border-white/10 bg-white/5 p-3 text-white/70">
+                  No active threads.
+                </div>
               )}
               {sections.inProgress.map((o) => (
                 <Link
@@ -77,10 +87,14 @@ export default function Chat() {
               ))}
             </div>
 
-            <h2 className="mt-6 text-sm font-semibold text-white/60">Completed</h2>
+            <h2 className="mt-6 text-sm font-semibold text-white/60">
+              Completed
+            </h2>
             <div className="mt-2 space-y-2">
               {sections.completed.length === 0 && (
-                <div className="rounded-lg border border-white/10 bg-white/5 p-3 text-white/70">No completed orders yet.</div>
+                <div className="rounded-lg border border-white/10 bg-white/5 p-3 text-white/70">
+                  No completed orders yet.
+                </div>
               )}
               {sections.completed.map((o) => (
                 <Link
