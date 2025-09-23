@@ -26,10 +26,12 @@ export default async function handler(req: any, res: any) {
         budgetTON: true,
         status: true,
         createdAt: true,
+        creator: { select: { address: true } },
       },
     });
     if (!offer) return res.status(404).json({ error: "not found" });
-    return res.status(200).json({ offer });
+    const mapped = { ...offer, makerAddress: offer.creator?.address || null };
+    return res.status(200).json({ offer: mapped });
   } catch (e: any) {
     return res.status(500).json({ error: e?.message || String(e) });
   }
