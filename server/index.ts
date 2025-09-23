@@ -2,17 +2,28 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
-import { createOffer, listOffers, tonChainInfo } from "./routes/offers";
+import {
+  createOffer,
+  listOffers,
+  tonChainInfo,
+  getOfferById,
+} from "./routes/offers";
 import { getUserByAddress, upsertUser } from "./routes/users";
 
-import { PING_MESSAGE, TON_API_BASE } from "./config";
+import { PING_MESSAGE, TON_API_BASE, CORS_ORIGIN } from "./config";
 import { resetDatabase } from "./routes/admin";
+import { handleTelegramWebhook } from "./routes/telegram";
 
 export function createServer() {
   const app = express();
 
   // Middleware
-  app.use(cors());
+  const origins = (CORS_ORIGIN || "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const corsOptions = origins.length ? { origin: origins } : { origin: true };
+  app.use(cors(corsOptions));
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
@@ -29,11 +40,14 @@ export function createServer() {
 
   // Offers API
   app.get("/api/offers", listOffers);
-  app.get("/api/offers/:id", require("./routes/offers").getOfferById);
+  app.get("/api/offers/:id", getOfferById);
   app.post("/api/offers", createOffer);
 
   // TON chain info proxy
   app.get("/api/ton/info", tonChainInfo);
+
+  // Telegram bot webhook
+  app.post("/api/telegram/webhook", handleTelegramWebhook);
 
   // Admin
   app.post("/api/admin/reset", resetDatabase);
@@ -77,6 +91,12 @@ export function createServer() {
     } catch (e) {
       res.status(404).end();
     }
+  });
+
+  // Generic error handler (avoid leaking internals)
+  app.use((err: any, _req: any, res: any, _next: any) => {
+    console.error("Unhandled error:", err);
+    res.status(500).json({ error: "internal_error" });
   });
 
   return app;

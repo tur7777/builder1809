@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
-import { useParams, Link, useLocation } from "react-router-dom";
+import { useParams, Link, useLocation, useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 export default function OfferPage() {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
   const seed = (location.state as any)?.offer;
   const [offer, setOffer] = useState<any>(seed || null);
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(!seed);
   const [error, setError] = useState<string | null>(null);
 
@@ -82,6 +84,32 @@ export default function OfferPage() {
                 {String(offer.description)}
               </div>
             )}
+            <div className="mt-4 flex gap-2">
+              <Button
+                className="bg-primary text-primary-foreground"
+                onClick={async () => {
+                  try {
+                    const r = await fetch("/api/orders", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        title: String(offer?.title || "Order"),
+                        makerAddress: offer?.makerAddress || "",
+                        priceTON: Number(offer?.budgetTON || 0),
+                        offerId: String(offer?.id || id || ""),
+                      }),
+                    });
+                    const j = await r.json();
+                    if (!r.ok) throw new Error(j?.error || "failed");
+                    navigate(`/chat/${j.id || j.order?.id}`);
+                  } catch (e) {
+                    alert("Unable to start chat");
+                  }
+                }}
+              >
+                Message Maker
+              </Button>
+            </div>
           </div>
         )}
       </div>

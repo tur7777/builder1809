@@ -24,6 +24,13 @@ enum JobStatus {
   completed
 }
 
+enum OrderStatus {
+  created
+  in_progress
+  completed
+  cancelled
+}
+
 model User {
   id        String   @id @default(cuid())
   address   String?  @unique
@@ -110,4 +117,42 @@ model Review {
 
   // Explicit date field matching TS type
   date DateTime @default(now())
+}
+
+model Order {
+  id             String       @id @default(cuid())
+  title          String
+  offerId        String?
+  offer          Offer?       @relation(fields: [offerId], references: [id])
+  makerAddress   String
+  takerAddress   String?
+  priceTON       Float
+  nPercent       Float        @default(1)
+  makerDeposit   Float        @default(0)
+  takerStake     Float        @default(0)
+  status         OrderStatus  @default(created)
+  makerConfirmed Boolean      @default(false)
+  takerConfirmed Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  completedAt    DateTime?
+  cancelledAt    DateTime?
+  contractAddr   String?      // escrow contract address on testnet
+
+  messages       Message[]
+
+  @@index([makerAddress])
+  @@index([takerAddress])
+  @@index([status, createdAt])
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id])
+  sender    String
+  text      String
+  createdAt DateTime @default(now())
+
+  @@index([orderId, createdAt])
 }

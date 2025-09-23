@@ -17,27 +17,47 @@ export const getOfferById: RequestHandler = async (req, res) => {
         createdAt: true,
       },
     });
-    if (!offer) return res.status(404).json({ error: "not found" });
+    if (!offer) return res.status(404).json({ error: "not_found" });
     res.json({ offer });
   } catch (e: any) {
-    res.status(500).json({ error: e?.message || String(e) });
+    console.error("getOfferById error:", e);
+    res.status(500).json({ error: "internal_error" });
   }
 };
 
 export const listOffers: RequestHandler = async (req, res) => {
   try {
     const qRaw = String((req.query?.q as string) || "").trim();
-    const tokens = qRaw ? qRaw.split(/\s+/).filter(Boolean) : [];
-    const where = tokens.length
-      ? {
-          AND: tokens.map((t) => ({
-            OR: [
-              { title: { contains: t, mode: "insensitive" as const } },
-              { description: { contains: t, mode: "insensitive" as const } },
-            ],
-          })),
-        }
-      : undefined;
+    const stackRaw = String((req.query?.stack as string) || "").trim();
+    const minBudget = Number((req.query?.minBudget as string) || "");
+    const maxBudget = Number((req.query?.maxBudget as string) || "");
+
+    const tokens = [
+      ...(qRaw ? qRaw.split(/\s+/).filter(Boolean) : []),
+      ...(stackRaw ? stackRaw.split(/[,\s]+/).filter(Boolean) : []),
+    ];
+
+    const filters: any[] = [];
+
+    if (tokens.length) {
+      filters.push(
+        ...tokens.map((t) => ({
+          OR: [
+            { title: { contains: t, mode: "insensitive" as const } },
+            { description: { contains: t, mode: "insensitive" as const } },
+          ],
+        })),
+      );
+    }
+
+    if (!Number.isNaN(minBudget)) {
+      filters.push({ budgetTON: { gte: minBudget } });
+    }
+    if (!Number.isNaN(maxBudget)) {
+      filters.push({ budgetTON: { lte: maxBudget } });
+    }
+
+    const where = filters.length ? { AND: filters } : undefined;
 
     const items = await prisma.offer.findMany({
       where,
@@ -53,22 +73,33 @@ export const listOffers: RequestHandler = async (req, res) => {
     });
     res.json({ items });
   } catch (e: any) {
-    res.status(500).json({ error: e?.message || String(e) });
+    console.error("listOffers error:", e);
+    res.status(500).json({ error: "internal_error" });
   }
 };
 
 export const createOffer: RequestHandler = async (req, res) => {
-  const { title, description = "", budgetTON } = req.body ?? {};
+  const { title, description = "", budgetTON, stack = "" } = req.body ?? {};
   if (!title || typeof budgetTON !== "number" || budgetTON < 0) {
-    return res.status(400).json({ error: "Invalid payload" });
+    return res.status(400).json({ error: "invalid_payload" });
   }
   try {
+    const desc = stack ? `${description}\n\nStack: ${String(stack)}` : description;
     const created = await prisma.offer.create({
-      data: { title, description, budgetTON, status: "open" },
+      data: { title, description: desc, budgetTON, status: "open" },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        budgetTON: true,
+        status: true,
+        createdAt: true,
+      },
     });
     res.status(201).json(created);
   } catch (e: any) {
-    res.status(500).json({ error: e?.message || String(e) });
+    console.error("createOffer error:", e);
+    res.status(500).json({ error: "internal_error" });
   }
 };
 
@@ -101,8 +132,9 @@ export const tonChainInfo: RequestHandler = async (_req, res) => {
 
     return res
       .status(502)
-      .json({ ok: false, error: "All TON API candidates failed", candidates });
+      .json({ ok: false, error: "upstream_unavailable", candidates });
   } catch (e) {
-    res.status(500).json({ ok: false, error: String(e) });
+    console.error("tonChainInfo error:", e);
+    res.status(500).json({ ok: false, error: "internal_error" });
   }
 };
