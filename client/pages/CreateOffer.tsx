@@ -40,6 +40,7 @@ export default function CreateOffer() {
           description,
           budgetTON: Number(budget),
           stack,
+          makerAddress: address,
         }),
       });
       if (!r.ok) throw new Error("Failed to create offer");
