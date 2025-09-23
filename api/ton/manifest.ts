@@ -4,7 +4,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const proto = (
       req.headers["x-forwarded-proto"] ||
-      req.protocol ||
       "https"
     ).toString();
     const host = (
