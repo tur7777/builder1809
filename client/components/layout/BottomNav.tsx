@@ -1,9 +1,10 @@
 import { Link, useLocation } from "react-router-dom";
-import { Wrench, Briefcase, BookOpen, User } from "lucide-react";
+import { Wrench, Briefcase, BookOpen, User, MessageSquare } from "lucide-react";
 
 const items = [
   { to: "/offer/new", label: "Make", Icon: Wrench },
   { to: "/take", label: "Take", Icon: Briefcase },
+  { to: "/chat", label: "Chat", Icon: MessageSquare },
   { to: "/learn", label: "Learn", Icon: BookOpen },
   { to: "/profile", label: "Profile", Icon: User },
 ] as const;
