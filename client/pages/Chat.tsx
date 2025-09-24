@@ -27,7 +27,9 @@ export default function Chat() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ address: addr }),
-        }).catch(() => {});
+        }).catch((err) => {
+          console.error("Failed to ensure self-chat:", err);
+        });
         const r = await fetch(
           `/api/orders?address=${encodeURIComponent(addr)}&role=any`,
         );
