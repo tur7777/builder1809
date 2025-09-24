@@ -13,6 +13,9 @@ import { getUserByAddress, upsertUser } from "./routes/users";
 import { PING_MESSAGE, TON_API_BASE, CORS_ORIGIN } from "./config";
 import { resetDatabase } from "./routes/admin";
 import { handleTelegramWebhook } from "./routes/telegram";
+import { listOrders, createOrder, getOrderById, updateOrder } from "./routes/orders";
+import { listMessages, createMessage } from "./routes/messages";
+import { ensureSelfChat } from "./routes/chat";
 
 export function createServer() {
   const app = express();
@@ -42,6 +45,19 @@ export function createServer() {
   app.get("/api/offers", listOffers);
   app.get("/api/offers/:id", getOfferById);
   app.post("/api/offers", createOffer);
+
+  // Orders API
+  app.get("/api/orders", listOrders);
+  app.post("/api/orders", createOrder);
+  app.get("/api/orders/:id", getOrderById);
+  app.patch("/api/orders/:id", updateOrder);
+
+  // Messages API
+  app.get("/api/messages", listMessages);
+  app.post("/api/messages", createMessage);
+
+  // Chat helpers
+  app.post("/api/chat/self", ensureSelfChat);
 
   // TON chain info proxy
   app.get("/api/ton/info", tonChainInfo);
