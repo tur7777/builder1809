@@ -89,12 +89,20 @@ export const listOffers: RequestHandler = async (req, res) => {
 };
 
 export const createOffer: RequestHandler = async (req, res) => {
-  const { title, description = "", budgetTON, stack = "", makerAddress = "" } = req.body ?? {};
+  const {
+    title,
+    description = "",
+    budgetTON,
+    stack = "",
+    makerAddress = "",
+  } = req.body ?? {};
   if (!title || typeof budgetTON !== "number" || budgetTON < 0) {
     return res.status(400).json({ error: "invalid_payload" });
   }
   try {
-    const desc = stack ? `${description}\n\nStack: ${String(stack)}` : description;
+    const desc = stack
+      ? `${description}\n\nStack: ${String(stack)}`
+      : description;
     let creatorId: string | undefined = undefined;
     const addr = String(makerAddress || "").trim();
     if (addr) {
