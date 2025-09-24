@@ -21,9 +21,9 @@
     "test": "vitest --run",
     "format.fix": "prettier --write .",
     "typecheck": "tsc",
-    "prisma:generate": "prisma generate",
+    "prisma:generate": "node scripts/prisma-generate-safe.cjs",
     "prisma:deploy": "prisma migrate deploy",
-    "postinstall": "prisma generate"
+    "postinstall": "node scripts/prisma-generate-safe.cjs"
   },
   "dependencies": {
     "@prisma/client": "^5.16.2",
