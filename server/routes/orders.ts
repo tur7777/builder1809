@@ -1,3 +1,4 @@
+
 import type { RequestHandler } from "express";
 import { prisma } from "../lib/prisma";
 import { ADMIN_SECRET } from "../config";
@@ -15,20 +16,24 @@ export const listOrders: RequestHandler = async (req, res) => {
       if (role === "maker") where.makerAddress = address;
       else if (role === "taker") where.takerAddress = address;
       else where.OR = [{ makerAddress: address }, { takerAddress: address }];
+
     }
     const items = await prisma.order.findMany({
       where,
       orderBy: { createdAt: "desc" },
     });
+
     res.json({ items });
   } catch (e) {
     console.error("listOrders error:", e);
     res.status(500).json({ error: "internal_error" });
+
   }
 };
 
 export const createOrder: RequestHandler = async (req, res) => {
   try {
+
     const {
       title = "",
       makerAddress: makerRaw = "",
@@ -53,6 +58,7 @@ export const createOrder: RequestHandler = async (req, res) => {
     const makerDeposit = +(price * (1 + N_PERCENT / 100)).toFixed(9);
     const takerStake = +(price * 0.2).toFixed(9);
 
+
     if (offerId) {
       const existing = await prisma.order.findFirst({
         where: { offerId, status: "created" },
@@ -66,12 +72,15 @@ export const createOrder: RequestHandler = async (req, res) => {
         title,
         makerAddress,
         priceTON: price,
+
         nPercent: N_PERCENT,
+
         makerDeposit,
         takerStake,
         offerId,
       },
     });
+
     res.status(201).json(created);
   } catch (e) {
     console.error("createOrder error:", e);
@@ -155,3 +164,4 @@ export const updateOrder: RequestHandler = async (req, res) => {
     res.status(500).json({ error: "internal_error" });
   }
 };
+

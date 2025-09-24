@@ -9,7 +9,7 @@ export default defineConfig(() => ({
     port: 8080,
     hmr: { overlay: false },
     fs: {
-      allow: ["./client", "./shared"],
+      allow: ["./client", "./shared", "./", "./index.html"],
       deny: [".env", ".env.*", "*.{crt,pem}", "**/.git/**", "server/**"],
     },
   },

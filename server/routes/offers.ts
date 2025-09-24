@@ -15,7 +15,11 @@ export const getOfferById: RequestHandler = async (req, res) => {
         budgetTON: true,
         status: true,
         createdAt: true,
+
         creator: { select: { address: true } },
+
+        makerAddress: true,
+
       },
     });
     if (!offerRaw) return res.status(404).json({ error: "not_found" });

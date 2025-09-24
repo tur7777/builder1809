@@ -9,6 +9,8 @@ import {
   getOfferById,
 } from "./routes/offers";
 import { getUserByAddress, upsertUser } from "./routes/users";
+import { getOrders, createOrder } from "./routes/orders";
+import { getMessages, createMessage } from "./routes/messages";
 
 import { PING_MESSAGE, TON_API_BASE, CORS_ORIGIN } from "./config";
 import { resetDatabase } from "./routes/admin";
@@ -52,6 +54,7 @@ export function createServer() {
   app.post("/api/offers", createOffer);
 
   // Orders API
+
   app.get("/api/orders", listOrders);
   app.post("/api/orders", createOrder);
   app.get("/api/orders/:id", getOrderById);
@@ -63,6 +66,15 @@ export function createServer() {
 
   // Chat helpers
   app.post("/api/chat/self", ensureSelfChat);
+
+
+  app.get("/api/orders", getOrders);
+  app.post("/api/orders", createOrder);
+
+  // Messages API
+  app.get("/api/messages", getMessages);
+  app.post("/api/messages", createMessage);
+
 
   // TON chain info proxy
   app.get("/api/ton/info", tonChainInfo);
