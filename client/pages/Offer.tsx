@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useWalletAddress } from "@/hooks/useTon";
 
 export default function OfferPage() {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
   const seed = (location.state as any)?.offer;
   const [offer, setOffer] = useState<any>(seed || null);
+  const me = useWalletAddress();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(!seed);
   const [error, setError] = useState<string | null>(null);
@@ -89,12 +91,28 @@ export default function OfferPage() {
                 className="bg-primary text-primary-foreground"
                 onClick={async () => {
                   try {
+                    const maker = String(offer?.makerAddress || "");
+                    // If trying to message yourself -> open Favorites (self chat)
+                    if (me && maker && me === maker) {
+                      const rSelf = await fetch("/api/chat/self", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ address: me }),
+                      });
+                      const jSelf = await rSelf.json();
+                      if (!rSelf.ok) throw new Error(jSelf?.error || "failed");
+                      const idSelf = jSelf?.order?.id;
+                      if (!idSelf) throw new Error("no_self_chat");
+                      navigate(`/chat/${idSelf}`);
+                      return;
+                    }
+
                     const r = await fetch("/api/orders", {
                       method: "POST",
                       headers: { "Content-Type": "application/json" },
                       body: JSON.stringify({
                         title: String(offer?.title || "Order"),
-                        makerAddress: offer?.makerAddress || "",
+                        makerAddress: maker,
                         priceTON: Number(offer?.budgetTON || 0),
                         offerId: String(offer?.id || id || ""),
                       }),
