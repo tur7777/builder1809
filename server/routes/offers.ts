@@ -6,7 +6,7 @@ export const getOfferById: RequestHandler = async (req, res) => {
   const id = String(req.params.id || "").trim();
   if (!id) return res.status(400).json({ error: "id required" });
   try {
-    const offer = await prisma.offer.findUnique({
+    const offerRaw = await prisma.offer.findUnique({
       where: { id },
       select: {
         id: true,
@@ -15,9 +15,19 @@ export const getOfferById: RequestHandler = async (req, res) => {
         budgetTON: true,
         status: true,
         createdAt: true,
+        creator: { select: { address: true } },
       },
     });
-    if (!offer) return res.status(404).json({ error: "not_found" });
+    if (!offerRaw) return res.status(404).json({ error: "not_found" });
+    const offer = {
+      id: offerRaw.id,
+      title: offerRaw.title,
+      description: offerRaw.description,
+      budgetTON: offerRaw.budgetTON,
+      status: offerRaw.status,
+      createdAt: offerRaw.createdAt,
+      makerAddress: offerRaw.creator?.address || "",
+    };
     res.json({ offer });
   } catch (e: any) {
     console.error("getOfferById error:", e);
