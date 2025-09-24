@@ -6,7 +6,7 @@ export const getOfferById: RequestHandler = async (req, res) => {
   const id = String(req.params.id || "").trim();
   if (!id) return res.status(400).json({ error: "id required" });
   try {
-    const offer = await prisma.offer.findUnique({
+    const offerRaw = await prisma.offer.findUnique({
       where: { id },
       select: {
         id: true,
@@ -15,10 +15,23 @@ export const getOfferById: RequestHandler = async (req, res) => {
         budgetTON: true,
         status: true,
         createdAt: true,
+
+        creator: { select: { address: true } },
+
         makerAddress: true,
+
       },
     });
-    if (!offer) return res.status(404).json({ error: "not_found" });
+    if (!offerRaw) return res.status(404).json({ error: "not_found" });
+    const offer = {
+      id: offerRaw.id,
+      title: offerRaw.title,
+      description: offerRaw.description,
+      budgetTON: offerRaw.budgetTON,
+      status: offerRaw.status,
+      createdAt: offerRaw.createdAt,
+      makerAddress: offerRaw.creator?.address || "",
+    };
     res.json({ offer });
   } catch (e: any) {
     console.error("getOfferById error:", e);
@@ -80,14 +93,33 @@ export const listOffers: RequestHandler = async (req, res) => {
 };
 
 export const createOffer: RequestHandler = async (req, res) => {
-  const { title, description = "", budgetTON, stack = "" } = req.body ?? {};
+  const {
+    title,
+    description = "",
+    budgetTON,
+    stack = "",
+    makerAddress = "",
+  } = req.body ?? {};
   if (!title || typeof budgetTON !== "number" || budgetTON < 0) {
     return res.status(400).json({ error: "invalid_payload" });
   }
   try {
-    const desc = stack ? `${description}\n\nStack: ${String(stack)}` : description;
+    const desc = stack
+      ? `${description}\n\nStack: ${String(stack)}`
+      : description;
+    let creatorId: string | undefined = undefined;
+    const addr = String(makerAddress || "").trim();
+    if (addr) {
+      // Ensure user exists and link as creator
+      const user = await prisma.user.upsert({
+        where: { address: addr },
+        update: { nickname: addr },
+        create: { address: addr, nickname: addr },
+      });
+      creatorId = user.id;
+    }
     const created = await prisma.offer.create({
-      data: { title, description: desc, budgetTON, status: "open" },
+      data: { title, description: desc, budgetTON, status: "open", creatorId },
       select: {
         id: true,
         title: true,

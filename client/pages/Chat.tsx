@@ -19,10 +19,21 @@ export default function Chat() {
   useEffect(() => {
     if (!addr) return;
     let mounted = true;
-    setLoading(true);
-    fetch(`/api/orders?address=${encodeURIComponent(addr)}&role=any`)
-      .then((r) => r.json())
-      .then((j) => {
+    async function run() {
+      try {
+        setLoading(true);
+        // Ensure a self-chat (Favorites) exists
+        await fetch(`/api/chat/self`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ address: addr }),
+        }).catch((err) => {
+          console.error("Failed to ensure self-chat:", err);
+        });
+        const r = await fetch(
+          `/api/orders?address=${encodeURIComponent(addr)}&role=any`,
+        );
+        const j = await r.json();
         if (!mounted) return;
         const list = (j.items || []) as any[];
         setItems(
@@ -35,8 +46,11 @@ export default function Chat() {
             createdAt: String(o.createdAt || new Date().toISOString()),
           })),
         );
-      })
-      .finally(() => mounted && setLoading(false));
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    }
+    run();
     return () => {
       mounted = false;
     };
@@ -68,6 +82,24 @@ export default function Chat() {
               In Progress
             </h2>
             <div className="mt-2 space-y-2">
+              {/* Favorites self chat shortcut */}
+              {addr && (
+                <Link
+                  to={(() => {
+                    const self = items.find(
+                      (i) => i.makerAddress === addr && i.takerAddress === addr,
+                    );
+                    return `/chat/${self ? self.id : ""}`;
+                  })()}
+                  className="block rounded-lg border border-white/10 bg-white/10 p-3 hover:bg-white/20"
+                >
+                  <div className="font-medium truncate">Favorites</div>
+                  <div className="text-xs text-white/60 mt-1">
+                    Private notes
+                  </div>
+                </Link>
+              )}
+
               {sections.inProgress.length === 0 && (
                 <div className="rounded-lg border border-white/10 bg-white/5 p-3 text-white/70">
                   No active threads.
