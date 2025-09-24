@@ -28,7 +28,9 @@ export default function Chat() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ address: addr }),
         }).catch(() => {});
-        const r = await fetch(`/api/orders?address=${encodeURIComponent(addr)}&role=any`);
+        const r = await fetch(
+          `/api/orders?address=${encodeURIComponent(addr)}&role=any`,
+        );
         const j = await r.json();
         if (!mounted) return;
         const list = (j.items || []) as any[];
@@ -90,7 +92,9 @@ export default function Chat() {
                   className="block rounded-lg border border-white/10 bg-white/10 p-3 hover:bg-white/20"
                 >
                   <div className="font-medium truncate">Favorites</div>
-                  <div className="text-xs text-white/60 mt-1">Private notes</div>
+                  <div className="text-xs text-white/60 mt-1">
+                    Private notes
+                  </div>
                 </Link>
               )}
 

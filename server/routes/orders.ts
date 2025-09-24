@@ -16,7 +16,10 @@ export const listOrders: RequestHandler = async (req, res) => {
       else if (role === "taker") where.takerAddress = address;
       else where.OR = [{ makerAddress: address }, { takerAddress: address }];
     }
-    const items = await prisma.order.findMany({ where, orderBy: { createdAt: "desc" } });
+    const items = await prisma.order.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+    });
     res.json({ items });
   } catch (e) {
     console.error("listOrders error:", e);
@@ -26,7 +29,12 @@ export const listOrders: RequestHandler = async (req, res) => {
 
 export const createOrder: RequestHandler = async (req, res) => {
   try {
-    const { title = "", makerAddress = "", priceTON, offerId = null } = req.body ?? {};
+    const {
+      title = "",
+      makerAddress = "",
+      priceTON,
+      offerId = null,
+    } = req.body ?? {};
     const price = Number(priceTON);
     if (!title || !makerAddress || !Number.isFinite(price) || price <= 0) {
       return res.status(400).json({ error: "invalid_payload" });
@@ -85,8 +93,10 @@ export const updateOrder: RequestHandler = async (req, res) => {
 
     if (action === "take") {
       const takerAddress = String(req.body?.takerAddress || "");
-      if (!takerAddress) return res.status(400).json({ error: "taker_required" });
-      if (order.status !== "created") return res.status(409).json({ error: "bad_state" });
+      if (!takerAddress)
+        return res.status(400).json({ error: "taker_required" });
+      if (order.status !== "created")
+        return res.status(409).json({ error: "bad_state" });
       const updated = await prisma.order.update({
         where: { id },
         data: { status: "in_progress", takerAddress },
@@ -101,8 +111,15 @@ export const updateOrder: RequestHandler = async (req, res) => {
       else if (actor === "taker") data.takerConfirmed = true;
       else return res.status(400).json({ error: "bad_actor" });
       let updated = await prisma.order.update({ where: { id }, data });
-      if (updated.makerConfirmed && updated.takerConfirmed && updated.status !== "completed") {
-        updated = await prisma.order.update({ where: { id }, data: { status: "completed", completedAt: new Date() } });
+      if (
+        updated.makerConfirmed &&
+        updated.takerConfirmed &&
+        updated.status !== "completed"
+      ) {
+        updated = await prisma.order.update({
+          where: { id },
+          data: { status: "completed", completedAt: new Date() },
+        });
       }
       return res.json({ order: updated });
     }
@@ -110,9 +127,14 @@ export const updateOrder: RequestHandler = async (req, res) => {
     if (action === "cancel") {
       const by = String(req.body?.by || "");
       const isAdmin = Boolean(ADMIN_SECRET) && by === ADMIN_SECRET; // simple admin check via secret
-      if (order.status === "completed") return res.status(409).json({ error: "already_completed" });
-      if (!isAdmin && order.status === "in_progress") return res.status(403).json({ error: "forbidden" });
-      const updated = await prisma.order.update({ where: { id }, data: { status: "cancelled", cancelledAt: new Date() } });
+      if (order.status === "completed")
+        return res.status(409).json({ error: "already_completed" });
+      if (!isAdmin && order.status === "in_progress")
+        return res.status(403).json({ error: "forbidden" });
+      const updated = await prisma.order.update({
+        where: { id },
+        data: { status: "cancelled", cancelledAt: new Date() },
+      });
       return res.json({ order: updated });
     }
 

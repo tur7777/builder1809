@@ -94,7 +94,9 @@ export const createOffer: RequestHandler = async (req, res) => {
     return res.status(400).json({ error: "invalid_payload" });
   }
   try {
-    const desc = stack ? `${description}\n\nStack: ${String(stack)}` : description;
+    const desc = stack
+      ? `${description}\n\nStack: ${String(stack)}`
+      : description;
     const created = await prisma.offer.create({
       data: { title, description: desc, budgetTON, status: "open" },
       select: {

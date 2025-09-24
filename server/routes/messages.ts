@@ -5,7 +5,10 @@ export const listMessages: RequestHandler = async (req, res) => {
   try {
     const orderId = String((req.query as any)?.orderId || "").trim();
     if (!orderId) return res.status(400).json({ error: "orderId_required" });
-    const items = await prisma.message.findMany({ where: { orderId }, orderBy: { createdAt: "asc" } });
+    const items = await prisma.message.findMany({
+      where: { orderId },
+      orderBy: { createdAt: "asc" },
+    });
     res.json({ items });
   } catch (e) {
     console.error("listMessages error:", e);
@@ -16,8 +19,11 @@ export const listMessages: RequestHandler = async (req, res) => {
 export const createMessage: RequestHandler = async (req, res) => {
   try {
     const { orderId = "", sender = "", text = "" } = req.body ?? {};
-    if (!orderId || !sender || !text) return res.status(400).json({ error: "invalid_payload" });
-    const created = await prisma.message.create({ data: { orderId, sender, text } });
+    if (!orderId || !sender || !text)
+      return res.status(400).json({ error: "invalid_payload" });
+    const created = await prisma.message.create({
+      data: { orderId, sender, text },
+    });
     res.status(201).json(created);
   } catch (e) {
     console.error("createMessage error:", e);

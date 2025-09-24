@@ -3,7 +3,9 @@ import { prisma } from "../lib/prisma";
 
 export const ensureSelfChat: RequestHandler = async (req, res) => {
   try {
-    const address = String(req.body?.address || req.query?.address || "").trim();
+    const address = String(
+      req.body?.address || req.query?.address || "",
+    ).trim();
     if (!address) return res.status(400).json({ error: "address_required" });
 
     // Try to find an existing self chat
