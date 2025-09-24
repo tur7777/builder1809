@@ -11,7 +11,7 @@
     ]
   },
   "scripts": {
-    "predev": "prisma generate",
+    "predev": "node scripts/prisma-generate-safe.cjs",
     "dev": "vite",
     "build": "npm run build:client && npm run build:server",
     "build:client": "vite build",
