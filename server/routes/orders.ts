@@ -31,14 +31,25 @@ export const createOrder: RequestHandler = async (req, res) => {
   try {
     const {
       title = "",
-      makerAddress = "",
+      makerAddress: makerRaw = "",
       priceTON,
       offerId = null,
     } = req.body ?? {};
     const price = Number(priceTON);
-    if (!title || !makerAddress || !Number.isFinite(price) || price <= 0) {
+
+    let makerAddress = String(makerRaw || "").trim();
+    if (!makerAddress && offerId) {
+      const offer = await prisma.offer.findUnique({
+        where: { id: String(offerId) },
+        select: { creator: { select: { address: true } } },
+      });
+      makerAddress = offer?.creator?.address || "";
+    }
+
+    if (!title || !Number.isFinite(price) || price <= 0 || !makerAddress) {
       return res.status(400).json({ error: "invalid_payload" });
     }
+
     const makerDeposit = +(price * (1 + N_PERCENT / 100)).toFixed(9);
     const takerStake = +(price * 0.2).toFixed(9);
 
