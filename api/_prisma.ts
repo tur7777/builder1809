@@ -1,27 +1,13 @@
 import pkg from "@prisma/client";
-import { mockPrisma } from "../server/lib/mock-prisma";
 
-// Safe access to PrismaClient across CJS/ESM interop
-const PrismaClientCtor: any = (pkg as any)?.PrismaClient;
+const { PrismaClient } = pkg as any;
 
-function shouldUseMock() {
-  const url = process.env.DATABASE_URL || "";
-  // Likely invalid Postgres host (Prisma Data Proxy/Accelerate style not supported by direct driver here)
-  if (/db\.prisma\.io/i.test(url)) return true;
-  if (!PrismaClientCtor) return true;
-  return false;
-}
+const globalForPrisma = globalThis as unknown as {
+  prisma?: InstanceType<typeof PrismaClient>;
+};
 
-let client: any;
-if (shouldUseMock()) {
-  client = mockPrisma;
-} else {
-  try {
-    client = new PrismaClientCtor();
-  } catch (_e) {
-    client = mockPrisma;
-  }
-}
+export const prisma: any = globalForPrisma.prisma || new PrismaClient();
 
-export const prisma: any = client;
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+
 export default prisma;
