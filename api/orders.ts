@@ -36,7 +36,8 @@ export default async function handler(req: any, res: any) {
       });
       return ok(res, { items });
     } catch (e: any) {
-      return res.status(500).json({ error: "internal_error" });
+      console.error("/api/orders GET error:", e?.message || e);
+      return ok(res, { items: [] }, 200);
     }
   }
 
