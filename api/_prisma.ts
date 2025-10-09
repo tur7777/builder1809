@@ -1,11 +1,13 @@
-import { PrismaClient } from "@prisma/client";
+import pkg from "@prisma/client";
+
+// Access PrismaClient in a way that works across different module interop setups
+const PrismaClientCtor: any = (pkg as any).PrismaClient;
 
 const globalForPrisma = globalThis as unknown as {
-  prisma?: PrismaClient;
+  prisma?: any;
 };
 
-export const prisma: PrismaClient =
-  globalForPrisma.prisma ?? new PrismaClient();
+export const prisma: any = globalForPrisma.prisma ?? new PrismaClientCtor();
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
