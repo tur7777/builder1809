@@ -42,12 +42,16 @@ export const listOffers: RequestHandler = async (req, res) => {
   try {
     const qRaw = String((req.query?.q as string) || "").trim();
     const stackRaw = String((req.query?.stack as string) || "").trim();
-    const minBudget = Number((req.query?.minBudget as string) || "");
-    const maxBudget = Number((req.query?.maxBudget as string) || "");
+
+    const minBudgetStr = String((req.query?.minBudget as string) ?? "").trim();
+    const maxBudgetStr = String((req.query?.maxBudget as string) ?? "").trim();
+
+    const minBudget = minBudgetStr !== "" ? Number(minBudgetStr) : null;
+    const maxBudget = maxBudgetStr !== "" ? Number(maxBudgetStr) : null;
 
     const tokens = [
       ...(qRaw ? qRaw.split(/\s+/).filter(Boolean) : []),
-      ...(stackRaw ? stackRaw.split(/[,\s]+/).filter(Boolean) : []),
+      ...(stackRaw ? stackRaw.split(/[\,\s]+/).filter(Boolean) : []),
     ];
 
     const filters: any[] = [];
@@ -63,10 +67,10 @@ export const listOffers: RequestHandler = async (req, res) => {
       );
     }
 
-    if (!Number.isNaN(minBudget)) {
+    if (minBudget !== null && Number.isFinite(minBudget)) {
       filters.push({ budgetTON: { gte: minBudget } });
     }
-    if (!Number.isNaN(maxBudget)) {
+    if (maxBudget !== null && Number.isFinite(maxBudget)) {
       filters.push({ budgetTON: { lte: maxBudget } });
     }
 
