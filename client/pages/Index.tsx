@@ -89,7 +89,9 @@ export default function Index() {
           apiUrl(`/api/offers${params.size ? `?${params.toString()}` : ""}`),
           { signal: ctrl.signal },
         );
-        const json = r.ok ? await r.json().catch(() => ({ items: [] })) : { items: [] };
+        const json = r.ok
+          ? await r.json().catch(() => ({ items: [] }))
+          : { items: [] };
         if (!mounted) return;
         setOffers(
           (json.items || []).map((d: any) => ({
