@@ -157,7 +157,11 @@ export default function Index() {
             onClick={() => setShowFilters((v) => !v)}
             className="absolute right-2 top-1/2 -translate-y-1/2 grid place-items-center rounded-md p-2 text-white/80 hover:bg-white/10"
           >
-            {showFilters ? <X className="size-4" /> : <Settings className="size-4" />}
+            {showFilters ? (
+              <X className="size-4" />
+            ) : (
+              <Settings className="size-4" />
+            )}
           </button>
         </div>
 

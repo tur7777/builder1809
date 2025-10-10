@@ -24,7 +24,9 @@ export default function ChatRoom() {
     if (!id) return;
     setLoading(true);
     try {
-      const r = await fetch(apiUrl(`/api/messages?orderId=${encodeURIComponent(id)}`));
+      const r = await fetch(
+        apiUrl(`/api/messages?orderId=${encodeURIComponent(id)}`),
+      );
       const j = await r.json();
       setMessages(
         (j.items || []).map((m: any) => ({
