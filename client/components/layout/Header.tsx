@@ -22,7 +22,8 @@ function UpsertOnConnect() {
         if (!mounted) return;
         try {
           // call server to upsert user, but don't allow exceptions to bubble
-          await fetch("/api/users/upsert", {
+          const { apiUrl } = await import("@/lib/api");
+          await fetch(apiUrl("/api/users/upsert"), {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ address }),
