@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { apiUrl } from "@/lib/api";
 import { useWalletAddress } from "@/hooks/useTon";
 
 export default function OfferPage() {
@@ -20,7 +21,7 @@ export default function OfferPage() {
       setLoading(true);
       setError(null);
       try {
-        const r = await fetch(`/api/offers/${id}`);
+        const r = await fetch(apiUrl(`/api/offers/${id}`));
         if (!mounted) return;
         if (!r.ok) throw new Error(`Failed: ${r.status}`);
         const ct = r.headers.get("content-type") || "";
@@ -94,7 +95,7 @@ export default function OfferPage() {
                     const maker = String(offer?.makerAddress || "");
                     // If trying to message yourself -> open Favorites (self chat)
                     if (me && maker && me === maker) {
-                      const rSelf = await fetch("/api/chat/self", {
+                      const rSelf = await fetch(apiUrl("/api/chat/self"), {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ address: me }),
@@ -107,7 +108,7 @@ export default function OfferPage() {
                       return;
                     }
 
-                    const r = await fetch("/api/orders", {
+                    const r = await fetch(apiUrl("/api/orders"), {
                       method: "POST",
                       headers: { "Content-Type": "application/json" },
                       body: JSON.stringify({
