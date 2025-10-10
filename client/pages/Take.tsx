@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
+import { apiUrl } from "@/lib/api";
 
 interface Offer {
   id: string;
@@ -35,37 +36,28 @@ export default function Take() {
       setError(null);
 
       const query = q ? `?q=${encodeURIComponent(q)}` : "";
-      const base = typeof window !== "undefined" ? window.location.origin : "";
-      const candidates = [`/api/offers${query}`, `${base}/api/offers${query}`];
-
-      for (const url of candidates) {
-        try {
-          const r = await fetch(url);
-          if (!mounted) return;
-          if (!r.ok) continue;
-          const json = await r.json().catch(() => null);
-          if (!json) continue;
-          setOffers(
-            (json.items || []).map((d: any) => ({
-              id: String(d.id ?? crypto.randomUUID()),
-              title: String(d.title ?? ""),
-              description: String(d.description ?? ""),
-              budgetTON: Number(d.budgetTON ?? 0),
-              status: String(d.status ?? "open"),
-              createdAt: String(d.createdAt ?? new Date().toISOString()),
-              imageUrl: d.imageUrl ?? null,
-            })),
-          );
-          setLoading(false);
-          return;
-        } catch (_) {
-          // try next candidate
-        }
-      }
-
-      if (mounted) {
-        setError("Network error while loading offers");
-        setLoading(false);
+      try {
+        const r = await fetch(apiUrl(`/api/offers${query}`));
+        if (!mounted) return;
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        const json = await r.json().catch(() => ({ items: [] }));
+        setOffers(
+          (json.items || []).map((d: any) => ({
+            id: String(d.id ?? crypto.randomUUID()),
+            title: String(d.title ?? ""),
+            description: String(d.description ?? ""),
+            budgetTON: Number(d.budgetTON ?? 0),
+            status: String(d.status ?? "open"),
+            createdAt: String(d.createdAt ?? new Date().toISOString()),
+            imageUrl: d.imageUrl ?? null,
+          })),
+        );
+      } catch (e) {
+        // Be resilient: show empty list instead of an error banner
+        setOffers([]);
+        setError(null);
+      } finally {
+        if (mounted) setLoading(false);
       }
     }
 
