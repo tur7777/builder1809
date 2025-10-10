@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { apiUrl } from "@/lib/api";
 import WalletGate from "@/components/WalletGate";
 import { useIsWalletConnected, useWalletAddress } from "@/hooks/useTon";
 
@@ -17,7 +18,7 @@ export default function CreateOffer() {
 
   useEffect(() => {
     if (connected && address) {
-      fetch("/api/users/upsert", {
+      fetch(apiUrl("/api/users/upsert"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ address }),
@@ -32,7 +33,7 @@ export default function CreateOffer() {
     }
     setLoading(true);
     try {
-      const r = await fetch("/api/offers", {
+      const r = await fetch(apiUrl("/api/offers"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

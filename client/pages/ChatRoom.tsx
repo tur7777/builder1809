@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useWalletAddress } from "@/hooks/useTon";
+import { apiUrl } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -23,7 +24,9 @@ export default function ChatRoom() {
     if (!id) return;
     setLoading(true);
     try {
-      const r = await fetch(`/api/messages?orderId=${encodeURIComponent(id)}`);
+      const r = await fetch(
+        apiUrl(`/api/messages?orderId=${encodeURIComponent(id)}`),
+      );
       const j = await r.json();
       setMessages(
         (j.items || []).map((m: any) => ({
@@ -53,7 +56,7 @@ export default function ChatRoom() {
     if (!id || !me || !text.trim()) return;
     const payload = { orderId: id, sender: me, text };
     setText("");
-    await fetch(`/api/messages`, {
+    await fetch(apiUrl(`/api/messages`), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),

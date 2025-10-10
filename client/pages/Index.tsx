@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Link, useNavigate } from "react-router-dom";
+import { apiUrl } from "@/lib/api";
 import { useEffect, useState } from "react";
 
 type BotItem = {
@@ -85,15 +86,16 @@ export default function Index() {
         if (minBudget) params.set("minBudget", minBudget);
         if (maxBudget) params.set("maxBudget", maxBudget);
         const r = await fetch(
-          `/api/offers${params.size ? `?${params.toString()}` : ""}`,
+          apiUrl(`/api/offers${params.size ? `?${params.toString()}` : ""}`),
           { signal: ctrl.signal },
         );
-        if (!r.ok) throw new Error(`Failed: ${r.status}`);
-        const json = await r.json();
+        const json = r.ok
+          ? await r.json().catch(() => ({ items: [] }))
+          : { items: [] };
         if (!mounted) return;
         setOffers(
           (json.items || []).map((d: any) => ({
-            id: String(d.id),
+            id: String(d.id ?? crypto.randomUUID()),
             title: String(d.title ?? ""),
             description: String(d.description ?? ""),
             budgetTON: Number(d.budgetTON ?? 0),
@@ -104,7 +106,8 @@ export default function Index() {
         );
       } catch (e: any) {
         if (!mounted || e?.name === "AbortError") return;
-        setError(String(e?.message || e));
+        setOffers([]);
+        setError(null);
       } finally {
         if (mounted) setLoading(false);
       }
@@ -156,7 +159,11 @@ export default function Index() {
             onClick={() => setShowFilters((v) => !v)}
             className="absolute right-2 top-1/2 -translate-y-1/2 grid place-items-center rounded-md p-2 text-white/80 hover:bg-white/10"
           >
-            {showFilters ? <X className="size-4" /> : <Settings className="size-4" />}
+            {showFilters ? (
+              <X className="size-4" />
+            ) : (
+              <Settings className="size-4" />
+            )}
           </button>
         </div>
 

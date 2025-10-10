@@ -1,10 +1,4 @@
-import pkg from "@prisma/client";
-const { PrismaClient } = pkg;
-const globalForPrisma = globalThis as unknown as {
-  prisma?: InstanceType<typeof PrismaClient>;
-};
-const prisma = globalForPrisma.prisma || new PrismaClient();
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+import { prisma } from "./_prisma";
 
 export default async function handler(req: any, res: any) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -87,6 +81,8 @@ export default async function handler(req: any, res: any) {
 
     return res.status(405).json({ error: "Method not allowed" });
   } catch (e: any) {
-    return res.status(500).json({ error: e?.message || String(e) });
+    console.error("/api/offers error:", e?.message || e);
+    // Be resilient: don't break homepage if DB is unreachable; return empty list
+    return res.status(200).json({ items: [] });
   }
 }

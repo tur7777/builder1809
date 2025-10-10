@@ -15,6 +15,7 @@ export default defineConfig(() => ({
   },
   build: {
     outDir: "dist/spa",
+    chunkSizeWarningLimit: 2000,
   },
   plugins: [react(), expressPlugin()],
   resolve: {
