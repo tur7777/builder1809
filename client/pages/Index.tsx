@@ -89,12 +89,11 @@ export default function Index() {
           apiUrl(`/api/offers${params.size ? `?${params.toString()}` : ""}`),
           { signal: ctrl.signal },
         );
-        if (!r.ok) throw new Error(`Failed: ${r.status}`);
-        const json = await r.json();
+        const json = r.ok ? await r.json().catch(() => ({ items: [] })) : { items: [] };
         if (!mounted) return;
         setOffers(
           (json.items || []).map((d: any) => ({
-            id: String(d.id),
+            id: String(d.id ?? crypto.randomUUID()),
             title: String(d.title ?? ""),
             description: String(d.description ?? ""),
             budgetTON: Number(d.budgetTON ?? 0),
@@ -105,7 +104,8 @@ export default function Index() {
         );
       } catch (e: any) {
         if (!mounted || e?.name === "AbortError") return;
-        setError(String(e?.message || e));
+        setOffers([]);
+        setError(null);
       } finally {
         if (mounted) setLoading(false);
       }
