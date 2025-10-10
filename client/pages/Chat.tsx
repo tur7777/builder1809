@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { useWalletAddress } from "@/hooks/useTon";
 import { Link } from "react-router-dom";
+import { apiUrl } from "@/lib/api";
 
 interface Order {
   id: string;
@@ -23,7 +24,7 @@ export default function Chat() {
       try {
         setLoading(true);
         // Ensure a self-chat (Favorites) exists
-        await fetch(`/api/chat/self`, {
+        await fetch(apiUrl(`/api/chat/self`), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ address: addr }),
@@ -31,7 +32,7 @@ export default function Chat() {
           console.error("Failed to ensure self-chat:", err);
         });
         const r = await fetch(
-          `/api/orders?address=${encodeURIComponent(addr)}&role=any`,
+          apiUrl(`/api/orders?address=${encodeURIComponent(addr)}&role=any`),
         );
         const j = await r.json();
         if (!mounted) return;
