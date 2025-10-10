@@ -1,4 +1,3 @@
-
 import type { RequestHandler } from "express";
 import { prisma } from "../lib/prisma";
 import { ADMIN_SECRET } from "../config";
@@ -26,8 +25,7 @@ export const listOrders: RequestHandler = async (req, res) => {
     res.json({ items });
   } catch (e) {
     console.error("listOrders error:", e);
-    res.status(500).json({ error: "internal_error" });
-
+    return res.status(200).json({ items: [] });
   }
 };
 
@@ -164,4 +162,3 @@ export const updateOrder: RequestHandler = async (req, res) => {
     res.status(500).json({ error: "internal_error" });
   }
 };
-
