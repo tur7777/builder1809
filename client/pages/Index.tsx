@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Link, useNavigate } from "react-router-dom";
+import { apiUrl } from "@/lib/api";
 import { useEffect, useState } from "react";
 
 type BotItem = {
@@ -85,7 +86,7 @@ export default function Index() {
         if (minBudget) params.set("minBudget", minBudget);
         if (maxBudget) params.set("maxBudget", maxBudget);
         const r = await fetch(
-          `/api/offers${params.size ? `?${params.toString()}` : ""}`,
+          apiUrl(`/api/offers${params.size ? `?${params.toString()}` : ""}`),
           { signal: ctrl.signal },
         );
         if (!r.ok) throw new Error(`Failed: ${r.status}`);
