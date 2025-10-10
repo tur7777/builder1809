@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pnpm approve-builds @prisma/client prisma @prisma/engines esbuild @swc/core && pnpm run prisma:generate && pnpm prisma db push && pnpm run build:client",
+  "buildCommand": "pnpm run prisma:generate && pnpm prisma db push && pnpm run build:client",
   "outputDirectory": "dist/spa",
   "framework": null,
   "rewrites": [
